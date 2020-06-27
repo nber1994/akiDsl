@@ -12,7 +12,7 @@ type RunCxt struct {
 
 func NewRunCxt() *RunCxt{
     return &RunCxt{
-        Vars: map[string]interface{}{},
+        Vars: make(map[string]interface{}),
     }
 }
 
