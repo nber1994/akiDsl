@@ -1,6 +1,7 @@
 package compile
 
 import (
+    "fmt"
     "go/ast"
     "go/token"
 	"github.com/spf13/cast"
@@ -37,6 +38,7 @@ func (this *Stmt) CompileStmt(cpt *CompileCxt, stmt ast.Stmt) {
 }
 
 func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
+    fmt.Println("in assign stmt")
     //只支持= :=
     if token.DEFINE != stmt.Tok || token.ASSIGN != stmt.Tok {
         panic("syntax error: nonsupport Tok ")
@@ -58,6 +60,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
 
 
 func (this *Stmt) CompileForStmt(cpt *CompileCxt, stmt *ast.ForStmt) {
+    fmt.Println("in for stmt")
     stmtHd := NewStmt()
     expr := NewExpr()
     //编译初始条件
@@ -89,6 +92,7 @@ func (this *Stmt) CompileIfStmt(cpt *CompileCxt, stmt *ast.IfStmt) {
 
 //只支持变量
 func (this *Stmt) CompileIncDecStmt(cpt *CompileCxt, stmt *ast.IncDecStmt) {
+    fmt.Println("in inc dec stmt")
     //只支持 ++ --
     if token.INC != stmt.Tok || token.DEC != stmt.Tok {
         panic("syntax error: nonsupport Tok ")
@@ -109,6 +113,7 @@ func (this *Stmt) CompileIncDecStmt(cpt *CompileCxt, stmt *ast.IncDecStmt) {
 }
 
 func (this *Stmt) CompileRangeStmt(cpt *CompileCxt, stmt *ast.RangeStmt) {
+    fmt.Println("in range stmt")
     expr := NewExpr()
     stmtHd := NewStmt()
     RangeTarget := expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, stmt.Key.(*ast.Ident).Obj.Decl.(*ast.AssignStmt).Rhs[0].(*ast.UnaryExpr).X)
@@ -138,6 +143,7 @@ func (this *Stmt) CompileRangeStmt(cpt *CompileCxt, stmt *ast.RangeStmt) {
 
 //支持返回
 func (this *Stmt) CompileReturnStmt(cpt *CompileCxt, stmt *ast.ReturnStmt) {
+    fmt.Println("in return stmt")
     var ret interface{}
     expr := NewExpr()
     e := stmt.Results[0]

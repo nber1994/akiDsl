@@ -7,6 +7,7 @@ import (
     "go/ast"
     "github.com/spf13/cast"
     "reflect"
+    "fmt"
 )
 
 type Expr struct {
@@ -43,6 +44,7 @@ func (this *Expr) CompileExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r ast.Expr
 
 //内置函数 MethodByName会panic
 func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.CallExpr) interface{} {
+    fmt.Println("in Call expr")
     var ret interface{}
     //校验内置函数
     var funcArgs []reflect.Value
@@ -59,6 +61,7 @@ func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast
 }
 
 func (this *Expr) CompileBasicLitExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.BasicLit) interface{} {
+    fmt.Println("in basiclit expr")
     var ret interface{}
     switch r.Kind {
     case token.INT:
@@ -74,6 +77,7 @@ func (this *Expr) CompileBasicLitExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r 
 }
 
 func (this *Expr) CompileArrayExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.CompositeLit) interface{} {
+    fmt.Println("in array expr")
     var ret []interface{}
     for _, e := range r.Elts {
         ret = append(ret, this.CompileExpr(dct, rct, e))
@@ -82,6 +86,7 @@ func (this *Expr) CompileArrayExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *as
 }
 
 func (this *Expr) CompileMapExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.CompositeLit) interface{} {
+    fmt.Println("in map expr")
     var ret map[interface{}]interface{}
     var key interface{}
     var value interface{}
@@ -103,6 +108,7 @@ func (this *Expr) CompileIdentExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *as
 }
 
 func (this *Expr) CompileBinaryExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.BinaryExpr) interface{} {
+    fmt.Println("in binary expr")
     var ret interface{}
     switch r.Op {
         //+ - * / %
