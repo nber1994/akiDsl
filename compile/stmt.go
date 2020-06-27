@@ -51,7 +51,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
         switch l := l.(type) {
         case *ast.Ident:
             r := stmt.Rhs[idx]
-            cpt.RunCxt.Vars[l.Name] = expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, r)
+            cpt.RunCxt.SetValue(l.Name, expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, r))
         default:
             panic("syntax error: assign type must be ident type")
         }
@@ -99,14 +99,14 @@ func (this *Stmt) CompileIncDecStmt(cpt *CompileCxt, stmt *ast.IncDecStmt) {
     }
 
     expr := NewExpr()
-    funcName := stmt.X.(*ast.Ident).Name
+    varName := stmt.X.(*ast.Ident).Name
     switch stmt.Tok {
     case token.INC:
-        cpt.RunCxt.Vars[funcName] = expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, stmt.X)
-        cpt.RunCxt.Vars[funcName] = BInc(cpt.RunCxt.Vars[funcName])
+        cpt.RunCxt.SetValue(varName, expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, stmt.X))
+        cpt.RunCxt.SetValue(varName, BInc(cpt.RunCxt.GetValue(varName)))
     case token.DEC:
-        cpt.RunCxt.Vars[funcName] = expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, stmt.X)
-        cpt.RunCxt.Vars[funcName] = BDec(cpt.RunCxt.Vars[funcName])
+        cpt.RunCxt.SetValue(varName, expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, stmt.X))
+        cpt.RunCxt.SetValue(varName, BDec(cpt.RunCxt.GetValue(varName)))
     default:
         panic("syntax error: nonsupport Tok ")
     }

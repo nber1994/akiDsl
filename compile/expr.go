@@ -101,9 +101,7 @@ func (this *Expr) CompileMapExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.
 
 func (this *Expr) CompileIdentExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.Ident) interface{} {
     var ret interface{}
-    if _, exist := rct.Vars[r.Name]; exist {
-        ret = rct.Vars[r.Name]
-    }
+    ret = rct.GetValue(r.Name)
     return ret
 }
 
