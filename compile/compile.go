@@ -27,5 +27,6 @@ func New(fAst *ast.File, fset *token.FileSet, dslCxtNode *dslCxt.DslCxt) *Compil
     }
 }
 
+//定义一个空方法，不然傻逼gc会在方法结束以后，把结构体回收
 func (this *CompileCxt) Rescue() {
 }

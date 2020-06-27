@@ -90,7 +90,7 @@ func (this *Expr) CompileArrayExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *as
 
 func (this *Expr) CompileMapExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.CompositeLit) interface{} {
     fmt.Println("---in map expr")
-    var ret map[interface{}]interface{}
+    ret := make(map[interface{}]interface{})
     var key interface{}
     var value interface{}
     for _, e := range r.Elts {

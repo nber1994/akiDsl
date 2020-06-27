@@ -50,6 +50,6 @@ func (this *AkiDsl) Run() (interface{}, *dslCxt.DslCxt, error){
 
     ret = <-pct.ReturnCh
     close(pct.ReturnCh)
-    //pct.Rescue()
+    //定义一个空方法，不然gc会在CompileDecl方法结束以后，把pct结构体回收 pct.Rescue()
     return ret, pct.DslCxt, retErr
 }
