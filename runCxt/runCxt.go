@@ -18,23 +18,19 @@ func NewRunCxt() *RunCxt{
 
 //获取值
 func (this *RunCxt) GetValue(varName string) interface{}{
-    fmt.Println("+++ get var ", varName)
-    if nil == this.Vars {
-        fmt.Println("+++ var nil")
-    }
     if _, exist := this.Vars[varName]; !exist {
         panic("syntax error: not exist var")
     }
+    fmt.Println("+++ get var ", varName)
+    print_json(this.Vars)
     return this.Vars[varName]
 }
 
 //设置值
 func (this *RunCxt) SetValue(varName string, value interface{}) bool {
-    fmt.Println("+++ set var ", varName, value)
-    if nil == this.Vars {
-        fmt.Println("+++ var nil")
-    }
     this.Vars[varName] = value
+    fmt.Println("+++ set var ", varName, value)
+    print_json(this.Vars)
     return true
 }
 
