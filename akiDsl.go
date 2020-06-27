@@ -23,10 +23,10 @@ func New(fileName *string, Cxt *string) *AkiDsl{
 
 func (this *AkiDsl) Run() (interface{}, *dslCxt.DslCxt, error){
     //总体控制错误信息
-    var err error
+    var retErr error
     defer func() {
         if r := recover(); r != nil {
-            err = fmt.Errorf("internal error: %v", r)
+            retErr = fmt.Errorf("internal error: %v", r)
         }
     }()
 
@@ -48,5 +48,5 @@ func (this *AkiDsl) Run() (interface{}, *dslCxt.DslCxt, error){
     decl := compile.NewDecl()
     d := pct.FAst.Decls[0]
     decl.CompileDecl(pct, d)
-    return ret, pct.DslCxt, err
+    return ret, pct.DslCxt, retErr
 }
