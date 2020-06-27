@@ -31,6 +31,9 @@ func (this *RunCxt) GetValue(varName string) interface{}{
 //设置值
 func (this *RunCxt) SetValue(varName string, value interface{}) bool {
     fmt.Println("+++ set var ", varName, value)
+    if nil == this.Vars {
+        fmt.Println("+++ var nil")
+    }
     this.Vars[varName] = value
     return true
 }
