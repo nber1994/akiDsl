@@ -25,8 +25,6 @@ func (this *Decl) CompileDecl(pct *CompileCxt, d ast.Decl) {
     default:
         panic("syntax error: The entry point must be main function")
     }
-    var ret interface{}
-    pct.ReturnCh <- ret
 }
 
 func (this *Decl) CompileFuncDecl(pct *CompileCxt, d *ast.FuncDecl) {
