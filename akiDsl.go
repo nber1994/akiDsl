@@ -41,11 +41,12 @@ func (this *AkiDsl) Run() (interface{}, *dslCxt.DslCxt, error){
     //debug
     ast.Print(fset, fAst)
 
+    var ret interface{}
     compileNode := compile.New(fAst, fset, this.DslCxt)
     go func() {
-        compileNode.Run()
+        ret = <-compileNode.ReturnCh
+        close(compileNode.ReturnCh)
     }()
-    ret := <-compileNode.ReturnCh
-    close(compileNode.ReturnCh)
+    compileNode.Run()
     return ret, compileNode.DslCxt, err
 }
