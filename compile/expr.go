@@ -36,6 +36,8 @@ func (this *Expr) CompileExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r ast.Expr
         }
     case *ast.CallExpr:
         ret = this.CompileCallExpr(dct, rct, r)
+    case *ast.Ident:
+        ret = this.CompileIdentExpr(dct, rct, r)
     default:
         panic("syntax error: nonsupport expr type")
     }
