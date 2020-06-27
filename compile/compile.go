@@ -17,7 +17,7 @@ type CompileCxt struct {
 
 func New(fAst *ast.File, fset *token.FileSet, dslCxtNode *dslCxt.DslCxt) *CompileCxt {
     rct := runCxt.NewRunCxt()
-    retChan := make(chan interface{})
+    retChan := make(chan interface{}, 1)
     return &CompileCxt {
         RunCxt: rct,
         FAst: fAst,
@@ -41,8 +41,6 @@ func (this *CompileCxt) Run() {
     default:
         panic("syntax error: The entry point must be main function")
     }
-    var ret interface{}
-    this.ReturnCh <- ret
 }
 
 //解释执行函数声明 目前只支持main函数，所以默认执行编译
