@@ -2,7 +2,6 @@ package akiDsl
 
 import (
     "fmt"
-    "go/ast"
     "go/parser"
     "go/token"
     "github.com/nber1994/akiDsl/dslCxt"
@@ -37,9 +36,6 @@ func (this *AkiDsl) Run() (interface{}, *dslCxt.DslCxt, error){
     if err != nil {
         panic(err)
     }
-
-    //debug
-    ast.Print(fset, fAst)
 
     pct := compile.New(fAst, fset, this.DslCxt)
 
