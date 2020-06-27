@@ -136,11 +136,14 @@ func (this *Stmt) CompileRangeStmt(cpt *CompileCxt, stmt *ast.RangeStmt) {
     }
 }
 
+//支持返回
 func (this *Stmt) CompileReturnStmt(cpt *CompileCxt, stmt *ast.ReturnStmt) {
-    var ret []interface{}
+    var ret interface{}
     expr := NewExpr()
-    for _, e := range stmt.Results {
-        ret = append(ret, expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, e))
-    }
+    e := stmt.Results[0]
+    ret = expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, e)
+    //for _, e := range stmt.Results {
+    //    ret = append(ret, expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, e))
+    //}
     cpt.ReturnCh <- ret
 }
