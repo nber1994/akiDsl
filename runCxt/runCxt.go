@@ -11,7 +11,9 @@ type RunCxt struct {
 }
 
 func NewRunCxt() *RunCxt{
-    return &RunCxt{}
+    return &RunCxt{
+        Vars: map[string]interface{}{},
+    }
 }
 
 //获取值
