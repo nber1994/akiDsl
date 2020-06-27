@@ -73,6 +73,7 @@ func (this *Expr) CompileBasicLitExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r 
     default:
         panic("syntax error: bad basicLit")
     }
+    fmt.Println("expr res ", ret)
     return ret
 }
 
