@@ -60,7 +60,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
 
 
 func (this *Stmt) CompileForStmt(cpt *CompileCxt, stmt *ast.ForStmt) {
-    fmt.Println("in for stmt")
+    fmt.Println("--in for stmt")
     stmtHd := NewStmt()
     expr := NewExpr()
     //编译初始条件
