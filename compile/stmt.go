@@ -38,7 +38,7 @@ func (this *Stmt) CompileStmt(cpt *CompileCxt, stmt ast.Stmt) {
 }
 
 func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
-    fmt.Println("in assign stmt")
+    fmt.Println("in assign stmt", stmt)
     //只支持= :=
     if token.DEFINE != stmt.Tok || token.ASSIGN != stmt.Tok {
         panic("syntax error: nonsupport Tok ")
