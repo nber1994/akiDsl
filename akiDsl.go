@@ -50,6 +50,6 @@ func (this *AkiDsl) Run() (interface{}, *dslCxt.DslCxt, error){
 
     ret = <-pct.ReturnCh
     close(pct.ReturnCh)
-    pct.Rescue()
+    //pct.Rescue()
     return ret, pct.DslCxt, retErr
 }
