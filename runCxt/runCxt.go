@@ -2,6 +2,7 @@ package runCxt
 
 import (
     "fmt"
+    "encoding/json"
 )
 
 
@@ -22,6 +23,7 @@ func (this *RunCxt) GetValue(varName string) interface{}{
         panic("syntax error: not exist var")
     }
     fmt.Println("+++ get var ", varName)
+    fmt.Println("+++ now var ", this.ToString())
     print_json(this.Vars)
     return this.Vars[varName]
 }
@@ -30,8 +32,17 @@ func (this *RunCxt) GetValue(varName string) interface{}{
 func (this *RunCxt) SetValue(varName string, value interface{}) bool {
     this.Vars[varName] = value
     fmt.Println("+++ set var ", varName, value)
+    fmt.Println("+++ now var ", this.ToString())
     print_json(this.Vars)
     return true
+}
+
+func (this *RunCxt) ToString() string {
+    jsonStu, err := json.Marshal(this.Vars)
+    if err != nil {
+        fmt.Println("生成json字符串错误")
+    }
+    return string(jsonStu)
 }
 
 func print_json(m map[string]interface{}) {
