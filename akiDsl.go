@@ -6,9 +6,9 @@ import (
     "go/parser"
     "go/token"
     "flag"
-    "akiDsl/runCxt"
-    "akiDsl/dslCxt"
-    "akiDsl/compile"
+    "github.com/nber1994/akiDsl/runCxt"
+    "github.com/nber1994/akiDsl/dslCxt"
+    "github.com/nber1994/akiDsl/compile"
 )
 
 type AkiDsl struct {

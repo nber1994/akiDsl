@@ -3,9 +3,9 @@ package compile
 import (
     "go/ast"
     "go/token"
-    "akiDsl/runCxt"
-    "akiDsl/dslCxt"
-    "akiDsl/compile/stmt"
+    "github.com/nber1994/akiDsl/runCxt"
+    "github.com/nber1994/akiDsl/dslCxt"
+    "github.com/nber1994/akiDsl/compile/stmt"
 )
 
 type CompileCxt struct {

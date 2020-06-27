@@ -1,7 +1,7 @@
 package dslCxt
 
 import (
-   "akiDsl/nodejson"
+   "github.com/nber1994/akiDsl/nodejson"
 )
 
 type DslCxt struct {

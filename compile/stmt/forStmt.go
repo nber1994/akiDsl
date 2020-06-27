@@ -1,8 +1,8 @@
 package stmt
 
 import (
-    "akiDsl/compile/stmt/expr"
-    "akiDsl/compile"
+    "github.com/nber1994/akiDsl/compile/stmt/expr"
+    "github.com/nber1994/akiDsl/compile"
 )
 
 type ForStmt struct {

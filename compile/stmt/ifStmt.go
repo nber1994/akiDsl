@@ -1,8 +1,8 @@
 package stmt
 
 import (
-    "akiDsl/runCxt"
-    "akiDsl/compile/stmt/expr"
+    "github.com/nber1994/akiDsl/runCxt"
+    "github.com/nber1994/akiDsl/compile/stmt/expr"
     "go/token"
 )
 
