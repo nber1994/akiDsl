@@ -5,7 +5,6 @@ import (
     "go/token"
     "github.com/nber1994/akiDsl/runCxt"
     "github.com/nber1994/akiDsl/dslCxt"
-    "github.com/nber1994/akiDsl/compile/stmt"
 )
 
 type CompileCxt struct {
@@ -48,25 +47,9 @@ func (this *CompileCxt) Run() {
 
 //解释执行函数声明 目前只支持main函数，所以默认执行编译
 func (this *CompileCxt) CompolieMainFuncDecl(d *ast.FuncDecl) {
+    stmtHd := NewStmt()
     for _, stmt := range d.Body.List {
-        this.CompileStmt(&stmt)
+        stmtHd.CompileStmt(this, stmt)
     }
 }
-
-//编译各个stmt
-func (this *CompileCxt) CompileStmt(stmt *ast.Stmt) {
-    var stmtHdl stmt.Stmt
-    switch stmt := stmt.(type) {
-    case *ast.AssignStmt:
-        stmtHdl = NewAssignStmt(stmt)
-    case *ast.IncDecStmt:
-        stmtHdl = NewIncDecStmt(stmt)
-    case *ast.IfStmt:
-        stmtHdl = NewIfStmt(stmt)
-    default:
-        panic("syntax error: nonsupport stmt ", stmt.Pos(), stmt.End())
-    }
-    stmtHdl.Compile(this.DslCxt, this.RunCxt)
-}
-
 

@@ -1,8 +1,10 @@
-package expr
+package compile
 
 import (
     "github.com/nber1994/akiDsl/runCxt"
+    "github.com/nber1994/akiDsl/dslCxt"
     "go/token"
+    "go/ast"
     "github.com/spf13/cast"
     "reflect"
 )
@@ -15,7 +17,7 @@ func NewExpr() *Expr {
     return &Expr{}
 }
 
-func (this *Expr) CompileExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.Expr) interface{} {
+func (this *Expr) CompileExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r ast.Expr) interface{} {
     var ret interface{}
     switch r := r.(type) {
     case *ast.BasicLit: //基本类型
@@ -23,7 +25,7 @@ func (this *Expr) CompileExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.Exp
     case *ast.BinaryExpr: //二元表达式
         ret = this.CompileBinaryExpr(dct, rct, r)
     case *ast.CompositeLit: //集合类型
-        switch compLit := r.Type.(type) {
+        switch  r.Type.(type) {
         case *ast.ArrayType: //数组
             ret = this.CompileArrayExpr(dct, rct, r)
         case *ast.MapType: //map
@@ -40,22 +42,23 @@ func (this *Expr) CompileExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.Exp
 }
 
 //内置函数 MethodByName会panic
-func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.Expr) interface{} {
+func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.CallExpr) interface{} {
     var ret interface{}
     //校验内置函数
     var funcArgs []reflect.Value
-    funcName := r.Fun.Name
+    funcName := r.Fun.(*ast.Ident).Name
     //初始化入参
     for _, arg := range r.Args {
         funcArgs = append(funcArgs, reflect.ValueOf(this.CompileExpr(dct, rct, arg)))
     }
     res := reflect.ValueOf(dct).MethodByName(funcName).Call(funcArgs)
+    if nil == res {
+        return ret
+    }
     return res[0].Interface()
-
 }
 
-func (this *Expr) CompileBasicLitExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.Expr) interface{} {
-    this.CheckTok(rct, l)
+func (this *Expr) CompileBasicLitExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.BasicLit) interface{} {
     var ret interface{}
     switch r.Kind {
     case token.INT:
@@ -70,28 +73,28 @@ func (this *Expr) CompileBasicLitExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r 
     return ret
 }
 
-func (this *Expr) CompileArrayExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.Expr) interface{} {
+func (this *Expr) CompileArrayExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.CompositeLit) interface{} {
     var ret []interface{}
     for _, e := range r.Elts {
-        ret = append(ret, this.CompileExpr(dct, rct, r))
+        ret = append(ret, this.CompileExpr(dct, rct, e))
     }
     return ret
 }
 
-func (this *Expr) CompileMapExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.Expr) interface{} {
+func (this *Expr) CompileMapExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.CompositeLit) interface{} {
     var ret map[interface{}]interface{}
     var key interface{}
     var value interface{}
     for _, e := range r.Elts {
-        key = this.CompileExpr(dct, rct, e.Key)
-        value = this.CompileExpr(dct, rct, e.Value)
+        key = this.CompileExpr(dct, rct, e.(*ast.KeyValueExpr).Key)
+        value = this.CompileExpr(dct, rct, e.(*ast.KeyValueExpr).Value)
         ret[key] = value
     }
     return ret
 }
 
 
-func (this *Expr) CompileIdentExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.Expr) interface{} {
+func (this *Expr) CompileIdentExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.Ident) interface{} {
     var ret interface{}
     if _, exist := rct.Vars[r.Name]; exist {
         ret = rct.Vars[r.Name]
@@ -99,9 +102,9 @@ func (this *Expr) CompileIdentExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *as
     return ret
 }
 
-func (this *Expr) CompileBinaryExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.Expr) interface{} {
+func (this *Expr) CompileBinaryExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.BinaryExpr) interface{} {
     var ret interface{}
-    switch e.Op {
+    switch r.Op {
         //+ - * / %
     case token.ADD:
         ret = BAdd(this.CompileExpr(dct, rct, r.X), this.CompileExpr(dct, rct, r.Y))
@@ -140,13 +143,3 @@ func (this *Expr) CompileBinaryExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *a
     return ret
 }
 
-
-func (this *Expr) CheckTok(rct *runCxt.RunCxt, l *ast.Ident) {
-    //声明
-    if token.DEFINE == this.Tok {
-        //检查变量是否已存在
-        if _, exist := rct.Vars[l.Name];exist {
-            panic("syntax error: redeclare var ", l.Name)
-        }
-    }
-}
