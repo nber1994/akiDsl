@@ -17,7 +17,7 @@ type CompileCxt struct {
 
 func New(fAst *ast.File, fset *token.FileSet, dslCxtNode *dslCxt.DslCxt) *CompileCxt {
     rct := runCxt.NewRunCxt()
-    retChan := make(chan interface{}, 1)
+    retChan := make(chan interface{}, 2)
     return &CompileCxt {
         RunCxt: rct,
         FAst: fAst,
