@@ -92,7 +92,7 @@ func (this *Stmt) CompileIfStmt(cpt *CompileCxt, stmt *ast.IfStmt) {
 
 //只支持变量
 func (this *Stmt) CompileIncDecStmt(cpt *CompileCxt, stmt *ast.IncDecStmt) {
-    fmt.Println("in inc dec stmt")
+    fmt.Println("--in inc dec stmt")
     //只支持 ++ --
     if token.INC != stmt.Tok || token.DEC != stmt.Tok {
         panic("syntax error: nonsupport Tok ")
@@ -113,7 +113,7 @@ func (this *Stmt) CompileIncDecStmt(cpt *CompileCxt, stmt *ast.IncDecStmt) {
 }
 
 func (this *Stmt) CompileRangeStmt(cpt *CompileCxt, stmt *ast.RangeStmt) {
-    fmt.Println("in range stmt")
+    fmt.Println("--in range stmt")
     expr := NewExpr()
     stmtHd := NewStmt()
     RangeTarget := expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, stmt.Key.(*ast.Ident).Obj.Decl.(*ast.AssignStmt).Rhs[0].(*ast.UnaryExpr).X)
@@ -141,15 +141,13 @@ func (this *Stmt) CompileRangeStmt(cpt *CompileCxt, stmt *ast.RangeStmt) {
     }
 }
 
-//支持返回
+//支持返回只支持一个
 func (this *Stmt) CompileReturnStmt(cpt *CompileCxt, stmt *ast.ReturnStmt) {
-    fmt.Println("in return stmt")
+    fmt.Println("--in return stmt")
     var ret interface{}
     expr := NewExpr()
     e := stmt.Results[0]
     ret = expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, e)
-    //for _, e := range stmt.Results {
-    //    ret = append(ret, expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, e))
-    //}
+    fmt.Println("---return ", ret)
     cpt.ReturnCh <- ret
 }
