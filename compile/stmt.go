@@ -16,7 +16,7 @@ func NewStmt() *Stmt{
 
 //编译stmt
 func (this *Stmt) CompileStmt(cpt *CompileCxt, stmt ast.Stmt) {
-    if nil != stmt {
+    if nil == stmt {
         return
     }
     switch stmt := stmt.(type) {
