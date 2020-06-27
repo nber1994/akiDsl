@@ -27,3 +27,5 @@ func New(fAst *ast.File, fset *token.FileSet, dslCxtNode *dslCxt.DslCxt) *Compil
     }
 }
 
+func (this *CompileCxt) Rescue() {
+}
