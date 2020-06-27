@@ -52,5 +52,5 @@ func (this *AkiDsl) Run() (interface{}, *dslCxt.DslCxt, error){
     decl := compile.NewDecl()
     d := pct.FAst.Decls[0]
     decl.CompileDecl(pct, d)
-    return ret, cpt.DslCxt, err
+    return ret, pct.DslCxt, err
 }
