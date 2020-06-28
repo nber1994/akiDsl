@@ -62,8 +62,27 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
             case *ast.Ident:
                 r := stmt.Rhs[idx]
                 cpt.RunCxt.SetValue(l.Name, expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, r))
+            case *ast.IndexExpr:
+                r := stmt.Rhs[idx]
+                target := expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, l.X)
+                idx := expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, l.Index)
+                switch target := target.(type) {
+                case map[interface{}]interface{}:
+                    target[idx] = expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, r)
+                    cpt.RunCxt.SetValue(l.X.(*ast.Ident).Name, expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, r))
+                case []interface{}:
+                    switch idx := idx.(type) {
+                    case int:
+                        target[idx] = expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, r)
+                    default:
+                        panic("syntax error: index type error")
+                    }
+                    cpt.RunCxt.SetValue(l.X.(*ast.Ident).Name, expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, r))
+                default:
+                    panic("syntax error: assign type error")
+                }
             default:
-                panic("syntax error: assign type must be ident type")
+                panic("syntax error: assign type error")
             }
         }
     } else if len(stmt.Lhs) > len(stmt.Rhs) && 1 == len(stmt.Rhs){
