@@ -32,8 +32,17 @@ func (this *Stmt) CompileStmt(cpt *CompileCxt, stmt ast.Stmt) {
         this.CompileRangeStmt(cpt, stmt)
     case *ast.ReturnStmt:
         this.CompileReturnStmt(cpt, stmt)
+    case *ast.BlockStmt:
+        this.CompileBlockStmt(cpt, stmt)
     default:
         panic("syntax error: nonsupport stmt ")
+    }
+}
+
+func (this *Stmt) CompileBlockStmt(cpt *CompileCxt, stmt *ast.BlockStmt) {
+    fmt.Println("-----------------in block stmt")
+    for _, b := range stmt.List {
+        this.CompileStmt(cpt, b)
     }
 }
 
