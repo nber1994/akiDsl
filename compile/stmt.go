@@ -124,7 +124,7 @@ func (this *Stmt) CompileIfStmt(cpt *CompileCxt, stmt *ast.IfStmt) {
     condRet := expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, stmt.Cond)
     stmtHd := NewStmt()
     fmt.Println("----------------in if init stmt")
-    fmt.Println(stmt)
+    fmt.Println(stmt.Init)
     stmtHd.CompileStmt(cpt, stmt.Init)
     //如果条件成立
     if cast.ToBool(condRet) {
