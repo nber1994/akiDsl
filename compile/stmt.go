@@ -119,6 +119,7 @@ func (this *Stmt) CompileForStmt(cpt *CompileCxt, stmt *ast.ForStmt) {
 }
 
 func (this *Stmt) CompileIfStmt(cpt *CompileCxt, stmt *ast.IfStmt) {
+    fmt.Println("----------------in for stmt")
     expr := NewExpr()
     condRet := expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, stmt.Cond)
     stmtHd := NewStmt()
@@ -127,9 +128,6 @@ func (this *Stmt) CompileIfStmt(cpt *CompileCxt, stmt *ast.IfStmt) {
     if cast.ToBool(condRet) {
         stmtHd.CompileStmt(cpt, stmt.Body)
     } else {
-        if nil == stmt.Else {
-            return
-        }
         stmtHd.CompileStmt(cpt, stmt.Else)
     }
 }

@@ -48,6 +48,7 @@ func (this *Expr) CompileExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r ast.Expr
 
 //index操作
 func (this *Expr) CompileIndexExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.IndexExpr) interface{} {
+    fmt.Println("------------------------in Index expr")
     var ret interface{}
     target := this.CompileExpr(dct, rct, r.X)
     index := this.CompileExpr(dct, rct, r.Index)
@@ -152,6 +153,7 @@ func (this *Expr) CompileMapExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.
 
 
 func (this *Expr) CompileIdentExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.Ident) interface{} {
+    fmt.Println("------------------------in ident expr")
     var ret interface{}
     ret = rct.GetValue(r.Name)
     return ret
