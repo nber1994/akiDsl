@@ -123,6 +123,7 @@ func (this *Stmt) CompileIfStmt(cpt *CompileCxt, stmt *ast.IfStmt) {
     expr := NewExpr()
     condRet := expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, stmt.Cond)
     stmtHd := NewStmt()
+    fmt.Println("----------------in if init stmt")
     fmt.Println(stmt)
     stmtHd.CompileStmt(cpt, stmt.Init)
     //如果条件成立
