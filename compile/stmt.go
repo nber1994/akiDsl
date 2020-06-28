@@ -56,14 +56,48 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
     expr := NewExpr()
 
     //Lhs中的变量进行声明
-    for idx, l := range stmt.Lhs {
-        switch l := l.(type) {
-        case *ast.Ident:
-            r := stmt.Rhs[idx]
-            cpt.RunCxt.SetValue(l.Name, expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, r))
-        default:
-            panic("syntax error: assign type must be ident type")
+    if len(stmt.Lhs) == len(stmt.Rhs) {
+        for idx, l := range stmt.Lhs {
+            switch l := l.(type) {
+            case *ast.Ident:
+                r := stmt.Rhs[idx]
+                cpt.RunCxt.SetValue(l.Name, expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, r))
+            default:
+                panic("syntax error: assign type must be ident type")
+            }
         }
+    } else if len(stmt.Lhs) > len(stmt.Rhs) && 1 == len(stmt.Rhs){
+        //声明语句不能嵌套，如果Rhs的元素是方法，则执行多返回值编译逻辑
+        r := stmt.Rhs[0]
+        switch r := r.(type) {
+        case *ast.CallExpr:
+            funcRet := expr.CompileCallMultiReturnExpr(cpt.DslCxt, cpt.RunCxt, r)
+            if len(funcRet) != len(funcRet) {
+                panic("syntax error: func return can not match")
+            }
+            for k, l := range stmt.Lhs {
+                cpt.RunCxt.SetValue(l.(*ast.Ident).Name, funcRet[k])
+            }
+        case *ast.IndexExpr:
+            if 2 == len(stmt.Lhs) && 1 == len(stmt.Rhs) {
+                //处理v, exist := a[b]的情况
+                target := expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, stmt.Rhs[0].(*ast.IndexExpr).X)
+                switch target := target.(type) {
+                case map[interface{}]interface{}:
+                    idx := expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, stmt.Rhs[0].(*ast.IndexExpr).Index)
+                    kName := stmt.Lhs[0].(*ast.Ident).Obj.Name
+                    vName := stmt.Lhs[1].(*ast.Ident).Obj.Name
+                    kVar, vExist := target[idx]
+                    cpt.RunCxt.SetValue(kName, kVar)
+                    cpt.RunCxt.SetValue(vName, vExist)
+                default:
+                    panic("syntax error: index exist assign stmt type error")
+                }
+            }
+        default:
+            panic("syntax error: assign nums not match")
+        }
+
     }
 }
 
@@ -88,6 +122,9 @@ func (this *Stmt) CompileIfStmt(cpt *CompileCxt, stmt *ast.IfStmt) {
     expr := NewExpr()
     condRet := expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, stmt.Cond)
     stmtHd := NewStmt()
+    if nil != stmt.Init {
+        stmtHd.CompileStmt(cpt, stmt.Init)
+    }
     //如果条件成立
     if cast.ToBool(condRet) {
         stmtHd.CompileStmt(cpt, stmt.Body)

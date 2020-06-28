@@ -80,6 +80,25 @@ func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast
     return res[0].Interface()
 }
 
+//处理多返回值函数
+func (this *Expr) CompileCallMultiReturnExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.CallExpr) []interface{} {
+    fmt.Println("------------------------in Call multi expr")
+    funcLib := NewFuncLib()
+    var ret []interface{}
+    //校验内置函数
+    var funcArgs []reflect.Value
+    funcName := r.Fun.(*ast.Ident).Name
+    //初始化入参
+    for _, arg := range r.Args {
+        funcArgs = append(funcArgs, reflect.ValueOf(this.CompileExpr(dct, rct, arg)))
+    }
+    res := reflect.ValueOf(funcLib).MethodByName(funcName).Call(funcArgs)
+    for _, v := range res {
+        ret = append(ret, v.Interface())
+    }
+    return ret
+}
+
 func (this *Expr) CompileBasicLitExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.BasicLit) interface{} {
     fmt.Println("------------------------in basiclit expr")
     var ret interface{}
