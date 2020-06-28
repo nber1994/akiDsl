@@ -127,7 +127,7 @@ func (this *Stmt) CompileRangeStmt(cpt *CompileCxt, stmt *ast.RangeStmt) {
     stmtHd := NewStmt()
     RangeTarget := expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, stmt.Key.(*ast.Ident).Obj.Decl.(*ast.AssignStmt).Rhs[0].(*ast.UnaryExpr).X)
     kName := stmt.Key.(*ast.Ident).Name
-    vName := stmt.Key.(*ast.Ident).Obj.Decl.(*ast.AssignStmt).Rhs[1].(*ast.Ident).Name
+    vName := stmt.Key.(*ast.Ident).Obj.Decl.(*ast.AssignStmt).Lhs[1].(*ast.Ident).Name
     switch rt := RangeTarget.(type) {
     case []interface{}:
         for k, v := range rt {
