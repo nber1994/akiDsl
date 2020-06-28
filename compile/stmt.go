@@ -69,7 +69,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
                 switch target := target.(type) {
                 case map[interface{}]interface{}:
                     target[idx] = expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, r)
-                    cpt.RunCxt.SetValue(l.X.(*ast.Ident).Name, expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, r))
+                    cpt.RunCxt.SetValue(l.X.(*ast.Ident).Name, target)
                 case []interface{}:
                     switch idx := idx.(type) {
                     case int:
@@ -77,7 +77,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
                     default:
                         panic("syntax error: index type error")
                     }
-                    cpt.RunCxt.SetValue(l.X.(*ast.Ident).Name, expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, r))
+                    cpt.RunCxt.SetValue(l.X.(*ast.Ident).Name, target)
                 default:
                     panic("syntax error: assign type error")
                 }
