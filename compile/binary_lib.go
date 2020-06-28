@@ -427,73 +427,11 @@ func BGeq(l interface{}, r interface{}) bool {
 }
 
 func BNeq(l interface{}, r interface{}) bool {
-	switch l := l.(type) {
-	case int:
-		return l != cast.ToInt(r)
-	case uint:
-		return l != cast.ToUint(r)
-	case int8:
-		return l != cast.ToInt8(r)
-	case int16:
-		return l != cast.ToInt16(r)
-	case int32:
-		return l != cast.ToInt32(r)
-	case int64:
-		return l != cast.ToInt64(r)
-	case uint8:
-		return l != cast.ToUint8(r)
-	case uint16:
-		return l != cast.ToUint16(r)
-	case uint32:
-		return l != cast.ToUint32(r)
-	case uint64:
-		return l != cast.ToUint64(r)
-	case float32:
-		return l != cast.ToFloat32(r)
-	case float64:
-		return l != cast.ToFloat64(r)
-	case bool:
-		return l != cast.ToBool(r)
-	default:
-        panic(fmt.Sprintf("syntax error: bad binary type= %#v \n", l))
-	}
-    var ret bool
-    return ret
+    return l != r
 }
 
-func BEql(l interface{}, r interface{}) interface{} {
-	switch l := l.(type) {
-	case int:
-		return l == cast.ToInt(r)
-	case uint:
-		return l == cast.ToUint(r)
-	case int8:
-		return l == cast.ToInt8(r)
-	case int16:
-		return l == cast.ToInt16(r)
-	case int32:
-		return l == cast.ToInt32(r)
-	case int64:
-		return l == cast.ToInt64(r)
-	case uint8:
-		return l == cast.ToUint8(r)
-	case uint16:
-		return l == cast.ToUint16(r)
-	case uint32:
-		return l == cast.ToUint32(r)
-	case uint64:
-		return l == cast.ToUint64(r)
-	case float32:
-		return l == cast.ToFloat32(r)
-	case float64:
-		return l == cast.ToFloat64(r)
-	case bool:
-		return l == cast.ToBool(r)
-	default:
-        panic(fmt.Sprintf("syntax error: bad binary type= %#v \n", l))
-	}
-    var ret interface{}
-    return ret
+func BEql(l interface{}, r interface{}) bool {
+    return l == r
 }
 
 func BInc(r interface{}) interface{} {
