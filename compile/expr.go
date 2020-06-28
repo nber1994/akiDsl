@@ -83,7 +83,19 @@ func (this *Expr) CompileArrayExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *as
     fmt.Println("---in array expr")
     var ret []interface{}
     for _, e := range r.Elts {
-        ret = append(ret, this.CompileExpr(dct, rct, e))
+        switch e := e.(type) {
+        case *ast.BasicLit:
+            ret = append(ret, this.CompileExpr(dct, rct, e))
+        case *ast.CompositeLit:
+            //拼接结构体
+            compLit := &ast.CompositeLit{
+                Type: r.Type.(*ast.ArrayType).Elt,
+                Elts: e.Elts,
+            }
+            ret = append(ret, this.CompileExpr(dct, rct, compLit))
+        default:
+            panic("syntax error: bad array item type")
+        }
     }
     return ret
 }
