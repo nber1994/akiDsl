@@ -120,12 +120,10 @@ func (this *Stmt) CompileForStmt(cpt *CompileCxt, stmt *ast.ForStmt) {
 
 func (this *Stmt) CompileIfStmt(cpt *CompileCxt, stmt *ast.IfStmt) {
     fmt.Println("----------------in if stmt")
-    expr := NewExpr()
-    condRet := expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, stmt.Cond)
     stmtHd := NewStmt()
-    fmt.Println("----------------in if init stmt")
-    fmt.Println(stmt.Init)
+    expr := NewExpr()
     stmtHd.CompileStmt(cpt, stmt.Init)
+    condRet := expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, stmt.Cond)
     //如果条件成立
     if cast.ToBool(condRet) {
         stmtHd.CompileStmt(cpt, stmt.Body)
