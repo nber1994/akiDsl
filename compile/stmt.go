@@ -122,9 +122,7 @@ func (this *Stmt) CompileIfStmt(cpt *CompileCxt, stmt *ast.IfStmt) {
     expr := NewExpr()
     condRet := expr.CompileExpr(cpt.DslCxt, cpt.RunCxt, stmt.Cond)
     stmtHd := NewStmt()
-    if nil != stmt.Init {
-        stmtHd.CompileStmt(cpt, stmt.Init)
-    }
+    stmtHd.CompileStmt(cpt, stmt.Init)
     //如果条件成立
     if cast.ToBool(condRet) {
         stmtHd.CompileStmt(cpt, stmt.Body)
