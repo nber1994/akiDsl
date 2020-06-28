@@ -94,7 +94,7 @@ func (this *Stmt) CompileIfStmt(cpt *CompileCxt, stmt *ast.IfStmt) {
 func (this *Stmt) CompileIncDecStmt(cpt *CompileCxt, stmt *ast.IncDecStmt) {
     fmt.Println("----------------in inc dec stmt")
     //只支持 ++ --
-    if token.INC != stmt.Tok || token.DEC != stmt.Tok {
+    if token.INC != stmt.Tok && token.DEC != stmt.Tok {
         panic("syntax error: nonsupport Tok ")
     }
 
