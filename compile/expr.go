@@ -38,8 +38,26 @@ func (this *Expr) CompileExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r ast.Expr
         ret = this.CompileCallExpr(dct, rct, r)
     case *ast.Ident:
         ret = this.CompileIdentExpr(dct, rct, r)
+    case *ast.IndexExpr:
+        ret = this.CompileIndexExpr(dct, rct, r)
     default:
         panic("syntax error: nonsupport expr type")
+    }
+    return ret
+}
+
+//index操作
+func (this *Expr) CompileIndexExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.IndexExpr) interface{} {
+    var ret interface{}
+    target := this.CompileExpr(dct, rct, r.X)
+    index := this.CompileExpr(dct, rct, r.Index)
+    switch target := target.(type) {
+    case []interface{}:
+        ret = target[index.(int)]
+    case map[interface{}]interface{}:
+        ret = target[index]
+    default:
+        panic("syntax error: bad index expr type")
     }
     return ret
 }
