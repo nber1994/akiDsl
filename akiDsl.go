@@ -1,7 +1,6 @@
 package akiDsl
 
 import (
-    "fmt"
     "go/parser"
     "go/token"
     "github.com/nber1994/akiDsl/dslCxt"
@@ -24,11 +23,7 @@ func New(fileName *string, Cxt *string) *AkiDsl{
 func (this *AkiDsl) Run() (interface{}, *dslCxt.DslCxt, error){
     //总体控制错误信息
     var retErr error
-    defer func() {
-        if r := recover(); r != nil {
-            retErr = fmt.Errorf("internal error: %v", r)
-        }
-    }()
+    var ret interface{}
 
     fset := token.NewFileSet()
     //这块可以扩展不止传入文件名
@@ -38,18 +33,18 @@ func (this *AkiDsl) Run() (interface{}, *dslCxt.DslCxt, error){
     }
 
     pct := compile.New(fAst, fset, this.DslCxt)
-
-    var ret interface{}
-
     decl := compile.NewDecl()
     d := pct.FAst.Decls[0]
 
     go func() {
         decl.CompileDecl(pct, d)
     }()
-
-    ret = <-pct.ReturnCh
-    close(pct.ReturnCh)
+    
+    select {
+    case ret = <-pct.ReturnCh:
+    case retErr = <-pct.ErrCh:
+    default:
+    }
     //定义一个空方法，不然gc会在CompileDecl方法结束以后，把pct结构体回收 pct.Rescue()
     return ret, pct.DslCxt, retErr
 }

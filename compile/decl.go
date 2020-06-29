@@ -2,6 +2,7 @@ package compile
 
 import (
     "fmt"
+    "errors"
     "go/ast"
 )
 
@@ -13,6 +14,13 @@ func NewDecl() *Decl {
 }
 
 func (this *Decl) CompileDecl(pct *CompileCxt, d ast.Decl) {
+    defer func() {
+        if err := recover(); err != nil {
+            retErr := errors.New(err.(string))
+            pct.ErrCh <- retErr
+        }
+    }()
+
     switch d := d.(type) {
     case *ast.FuncDecl:
         //处理main函数
