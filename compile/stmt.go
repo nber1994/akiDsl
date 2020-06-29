@@ -51,9 +51,15 @@ func (this *Stmt) CompileStmt(cpt *CompileCxt, stmt ast.Stmt) {
         cStmt.CompileBlockStmt(cpt, stmt)
     case *ast.ExprStmt:
         cStmt.CompileExprStmt(cpt, stmt)
+    case *ast.DeclStmt:
+        cStmt.CompileDeclStmt(cpt, stmt)
     default:
         panic("syntax error: nonsupport stmt ")
     }
+}
+
+//声明stmt
+func (this *Stmt) CompileDeclStmt(cpt *CompileCxt, stmt *ast.DeclStmt) {
 }
 
 //表达式stmt，目前只支持callExpr
@@ -184,6 +190,15 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
                     panic("syntax error: index exist assign stmt type error")
                 }
             }
+		case *ast.Ident:
+			for _, l := range stmt.Lhs {
+				switch l := l.(type) {
+				case *ast.Ident:
+					this.SetValue(l.Name, expr.CompileExpr(cpt.DslCxt, this, r), token.DEFINE == stmt.Tok)
+				default:
+                    panic("syntax error: index exist assign stmt type error")
+				}
+			}
         default:
             panic("syntax error: assign nums not match")
         }
