@@ -6,11 +6,11 @@ import (
 )
 
 type DslCxt struct {
-    OriginCxt string //原始上下文
+    OriginCxt *string //原始上下文
 }
 
 
-func New(originCxt string) *DslCxt {
+func New(originCxt *string) *DslCxt {
     fmt.Println("....originCxt ", originCxt)
     return &DslCxt{
         OriginCxt: originCxt,
@@ -20,7 +20,7 @@ func New(originCxt string) *DslCxt {
 //获取Cxt的值
 func (this *DslCxt) Get(path string) interface{} {
     fmt.Println("....dsl ", this.OriginCxt)
-    Node, e := nodejson.UnmarshalToNode([]byte(this.OriginCxt))
+    Node, e := nodejson.UnmarshalToNode([]byte(*this.OriginCxt))
     fmt.Println(e)
     value := Node.Get(path)
     fmt.Println("....dsl ", Node)
@@ -29,7 +29,7 @@ func (this *DslCxt) Get(path string) interface{} {
 }
 
 func (this *DslCxt) Set(path string, value interface{}) interface{} {
-    Node, _ := nodejson.UnmarshalToNode([]byte(this.OriginCxt))
+    Node, _ := nodejson.UnmarshalToNode([]byte(*this.OriginCxt))
     Node.Set(path, value)
     fmt.Println("....dsl Set path ", path, " value ", value)
     return this.Get(path)

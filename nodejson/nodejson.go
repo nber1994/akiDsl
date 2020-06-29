@@ -12,7 +12,6 @@ type Node struct {
 }
 
 func UnmarshalToNode(data []byte) (Node, error) {
-    fmt.Println(string(data))
 	node := Node{}
 	dec := json.NewDecoder(bytes.NewBuffer(data))
 	dec.UseNumber()
@@ -24,8 +23,9 @@ func UnmarshalToNode(data []byte) (Node, error) {
 	return node, nil
 }
 
+
 func (n *Node) Value() interface{} {
-    return n.data
+	return n.data
 }
 
 func (n *Node) Marshal() ([]byte, error) {

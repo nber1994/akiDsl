@@ -12,8 +12,8 @@ type AkiDsl struct {
     DslCxt *dslCxt.DslCxt//dsl与上下文的交互
 }
 
-func New(fileName *string, Cxt *string) *AkiDsl {
-    dslCxtNode := dslCxt.New(*Cxt)
+func New(fileName *string, cxt *string) *AkiDsl {
+    dslCxtNode := dslCxt.New(cxt)
     return &AkiDsl{
         FileName: fileName,
         DslCxt: dslCxtNode,
