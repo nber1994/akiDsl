@@ -190,7 +190,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
                     panic("syntax error: index exist assign stmt type error")
                 }
             }
-		case *ast.Ident:
+		default:
 			for _, l := range stmt.Lhs {
 				switch l := l.(type) {
 				case *ast.Ident:
@@ -199,8 +199,6 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
                     panic("syntax error: index exist assign stmt type error")
 				}
 			}
-        default:
-            panic("syntax error: assign nums not match")
         }
 
     }
