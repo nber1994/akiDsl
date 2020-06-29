@@ -7,6 +7,7 @@ import (
     "github.com/spf13/cast"
     "reflect"
     "fmt"
+	"strconv"
 )
 
 type Expr struct {
@@ -109,7 +110,13 @@ func (this *Expr) CompileBasicLitExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.Basi
     case token.FLOAT:
         ret = cast.ToFloat64(r.Value)
     case token.STRING:
-        ret = cast.ToString(r.Value)
+        retStr := cast.ToString(r.Value)
+		var err error
+		//去掉转义的双引号 这个真tm坑死我了
+		ret, err = strconv.Unquote(retStr)
+		if nil != err {
+			panic("syntax error: bad basicLit string")
+		}
     default:
         panic("syntax error: bad basicLit")
     }
