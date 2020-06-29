@@ -13,7 +13,6 @@ type DslCxt struct {
 
 func New(originCxt string) (*DslCxt, error) {
     node, err := nodejson.UnmarshalToNode([]byte(originCxt))
-    fmt.Println("....dsl ", originCxt)
     if err != nil {
         return nil, err
     }
@@ -27,7 +26,7 @@ func New(originCxt string) (*DslCxt, error) {
 //获取Cxt的值
 func (this *DslCxt) Get(path string) interface{} {
     value := this.Node.Get(path)
-    fmt.Println("....dsl ", this.OriginCxt)
+    fmt.Println("....dsl ", this.Node)
     fmt.Println("....dsl Get path ", path, " value ", value.Value())
     return value.Value()
 }
