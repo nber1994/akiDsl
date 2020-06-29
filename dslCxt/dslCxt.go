@@ -19,6 +19,7 @@ func New(originCxt string) *DslCxt {
 
 //获取Cxt的值
 func (this *DslCxt) Get(path string) interface{} {
+    fmt.Println("....dsl ", this.OriginCxt)
     Node, _ := nodejson.UnmarshalToNode([]byte(this.OriginCxt))
     value := Node.Get(path)
     fmt.Println("....dsl ", Node)
