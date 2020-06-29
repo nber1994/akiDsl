@@ -11,10 +11,8 @@ type DslCxt struct {
 
 
 func New(originCxt *string) *DslCxt {
-    fmt.Println("....originCxt ", originCxt)
-	rawJson := fmt.Sprintf("%s", *originCxt)
     return &DslCxt{
-        OriginCxt: &rawJson,
+        OriginCxt: originCxt,
     }
 }
 
@@ -22,7 +20,6 @@ func New(originCxt *string) *DslCxt {
 func (this *DslCxt) Get(path string) interface{} {
     fmt.Println("....dsl orignCxt", *this.OriginCxt)
     node, _ := nodejson.UnmarshalToNode([]byte(*this.OriginCxt))
-    fmt.Println("node.data", node)
     value := node.Get(path)
     fmt.Println("....dsl ", value)
     fmt.Println("....dsl Get path ", path, " value ", value.Value())

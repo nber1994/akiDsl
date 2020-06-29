@@ -16,7 +16,6 @@ func UnmarshalToNode(data []byte) (Node, error) {
 	dec := json.NewDecoder(bytes.NewBuffer(data))
 	dec.UseNumber()
 	err := dec.Decode(&node.data)
-    fmt.Println(node.data)
 	if err != nil {
 		return Node{}, err
 	}
@@ -35,7 +34,6 @@ func (n *Node) Marshal() ([]byte, error) {
 
 func (n *Node) Get(link string) Node {
 	if node, err := n.GetE(link); err != nil {
-		fmt.Println(err)
 		return Node{}
 	} else {
 		return node
@@ -54,7 +52,6 @@ func (n *Node) GetE(link string) (Node, error) {
 			return Node{data: data}, nil
 		}
 		dataMap, ok := data.(map[string]interface{})
-		fmt.Println(ok, dataMap, k)
 		if !ok {
 			return Node{}, fmt.Errorf("node %v is last node", data)
 		}
