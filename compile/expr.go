@@ -20,6 +20,9 @@ func NewExpr() *Expr {
 
 func (this *Expr) CompileExpr(dct *dslCxt.DslCxt, rct *Stmt, r ast.Expr) interface{} {
     var ret interface{}
+	if nil == r {
+		return ret
+	}
     switch r := r.(type) {
     case *ast.BasicLit: //基本类型
         ret = this.CompileBasicLitExpr(dct, rct, r)

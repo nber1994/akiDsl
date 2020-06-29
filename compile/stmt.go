@@ -51,16 +51,60 @@ func (this *Stmt) CompileStmt(cpt *CompileCxt, stmt ast.Stmt) {
         cStmt.CompileBlockStmt(cpt, stmt)
     case *ast.ExprStmt:
         cStmt.CompileExprStmt(cpt, stmt)
-    case *ast.DeclStmt:
-        cStmt.CompileDeclStmt(cpt, stmt)
     default:
         panic("syntax error: nonsupport stmt ")
     }
 }
 
-//声明stmt
-func (this *Stmt) CompileDeclStmt(cpt *CompileCxt, stmt *ast.DeclStmt) {
-}
+////声明stmt
+//func (this *Stmt) CompileDeclStmt(cpt *CompileCxt, stmt *ast.DeclStmt) {
+//	expr := NewExpr()
+//	for _, spec := range stmt.Decl.Specs {
+//		switch spec := spec.(type) {
+//		case *ast.ValueSpec:
+//			if nil != spec.Values {
+//				if len(spec.Values) == len(spec.Names) {
+//					for i, n := range spec.Names {
+//						v := spec.Values[i]
+//						this.SetValue(n.(*ast.Ident).Name, expr.CompileExpr(cpt.DslCxt, this, v), true)
+//					}
+//				} else if len(spec.Names) > len(spec.Values) && 1 == len(spec.Values) {
+//					for i, n := range spec.Names {
+//						v := spec.Values[0]
+//						this.SetValue(n.(*ast.Ident).Name, expr.CompileExpr(cpt.DslCxt, this, v), true)
+//					}
+//
+//				} else {
+//					panic("syntax error: nonsupport spec num not match")
+//				}
+//			} else {
+//				for _, n := range spec.Names {
+//					switch spec.Type.(*ast.Ident).Name {
+//					case "int":
+//						var v int
+//					case "int32":
+//						var v int32
+//					case "int64":
+//						var v int64
+//					case "string":
+//						var v string
+//					case "float":
+//						var v float
+//					case "float32":
+//						var v float32
+//					case "float64":
+//						var v float64
+//					case "bool":
+//						var v bool
+//					}
+//					this.SetValue(n.(*ast.Ident).Name, expr.CompileExpr(cpt.DslCxt, this, v), true)
+//				}
+//			}
+//		default:
+//			panic("syntax error: nonsupport spec ")
+//		}
+//	}
+//}
 
 //表达式stmt，目前只支持callExpr
 func (this *Stmt) CompileExprStmt(cpt *CompileCxt, stmt *ast.ExprStmt) {
