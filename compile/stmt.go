@@ -33,7 +33,6 @@ func (this *Stmt) CompileStmt(cpt *CompileCxt, stmt ast.Stmt) {
         return
     }
     cStmt := this.NewChild()
-    cStmt.Father = this
     switch stmt := stmt.(type) {
     case *ast.AssignStmt:
         //赋值在本节点的内存中
@@ -161,7 +160,7 @@ func (this *Stmt) CompileForStmt(cpt *CompileCxt, stmt *ast.ForStmt) {
     stmtHd := this.NewChild()
     expr := NewExpr()
     //编译初始条件
-    stmtHd.CompileStmt(cpt, stmt.Init)
+    this.CompileStmt(cpt, stmt.Init)
     for {
         if access := expr.CompileExpr(cpt.DslCxt, this, stmt.Cond); !cast.ToBool(access) {
             break;
