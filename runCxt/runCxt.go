@@ -27,6 +27,11 @@ func (this *RunCxt) GetValue(varName string) interface{}{
     return this.Vars[varName]
 }
 
+func (this *RunCxt) ValueExist(varName string) bool {
+    _, exist := this.Vars[varName]
+    return exist
+}
+
 //设置值
 func (this *RunCxt) SetValue(varName string, value interface{}) bool {
     fmt.Println("[+]set var ", varName, value)
