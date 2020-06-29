@@ -66,12 +66,13 @@ func (this *Stmt) CompileBlockStmt(cpt *CompileCxt, stmt *ast.BlockStmt) {
 func (this *Stmt) GetValue(name string) interface{} {
     stmt := this
     for nil != stmt {
+        fmt.Println("now stmt rct is ", stmt.Rct.ToString())
         if _, exist := stmt.Rct.Vars[name]; exist {
             return stmt.Rct.Vars[name]
         }
         stmt = stmt.Father
     }
-    panic("syntax error: non-reachable var" + name)
+    panic("syntax error: non-reachable var " + name)
 }
 
 func (this *Stmt) SetValue(name string, value interface{}, create bool) {
