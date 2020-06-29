@@ -2,6 +2,7 @@ package dslCxt
 
 import (
    "github.com/nber1994/akiDsl/nodejson"
+   "fmt"
 )
 
 type DslCxt struct {
@@ -25,10 +26,12 @@ func New(originCxt *string) (*DslCxt, error) {
 //获取Cxt的值
 func (this *DslCxt) Get(path string) interface{} {
     value := this.Node.Get(path)
+    fmt.Println("....dsl Get path ", value)
     return value
 }
 
 func (this *DslCxt) Set(path string, value interface{}) interface{} {
     this.Node.Set(path, value)
+    fmt.Println("....dsl Set path ", value)
     return this.Get(path)
 }
