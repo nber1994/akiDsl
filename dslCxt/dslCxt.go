@@ -10,16 +10,16 @@ type DslCxt struct {
 }
 
 
-func New(originCxt *string) *DslCxt {
+func New(originCxt *string) (*DslCxt, error) {
     node, err := nodejson.UnmarshalToNode([]byte(*originCxt))
     if err != nil {
-        panic("dslCxt UnmarshalToNode err ")
+        return nil, err
     }
 
     return &DslCxt{
         OriginCxt: originCxt,
         Node: node,
-    }
+    }, nil
 }
 
 //获取Cxt的值
