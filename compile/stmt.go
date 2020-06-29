@@ -74,7 +74,10 @@ func (this *Stmt) GetValue(name string) interface{} {
     panic("syntax error: non-reachable var")
 }
 
-func (this *Stmt) SetValue(name string, value interface{}) {
+func (this *Stmt) SetValue(name string, value interface{}, create bool) {
+    if !create {
+        this.GetValue(name)
+    }
     this.Rct.SetValue(name, value)
 }
 
@@ -92,7 +95,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
             switch l := l.(type) {
             case *ast.Ident:
                 r := stmt.Rhs[idx]
-                this.SetValue(l.Name, expr.CompileExpr(cpt.DslCxt, this, r))
+                this.SetValue(l.Name, expr.CompileExpr(cpt.DslCxt, this, r), token.DEFINE == stmt.Tok)
             case *ast.IndexExpr:
                 r := stmt.Rhs[idx]
                 target := expr.CompileExpr(cpt.DslCxt, this, l.X)
@@ -100,7 +103,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
                 switch target := target.(type) {
                 case map[interface{}]interface{}:
                     target[idx] = expr.CompileExpr(cpt.DslCxt, this, r)
-                    this.SetValue(l.X.(*ast.Ident).Name, target)
+                    this.SetValue(l.X.(*ast.Ident).Name, target, false)
                 case []interface{}:
                     switch idx := idx.(type) {
                     case int:
@@ -108,7 +111,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
                     default:
                         panic("syntax error: index type error")
                     }
-                    this.SetValue(l.X.(*ast.Ident).Name, target)
+                    this.SetValue(l.X.(*ast.Ident).Name, target, false)
                 default:
                     panic("syntax error: assign type error")
                 }
@@ -126,7 +129,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
                 panic("syntax error: func return can not match")
             }
             for k, l := range stmt.Lhs {
-                this.SetValue(l.(*ast.Ident).Name, funcRet[k])
+                this.SetValue(l.(*ast.Ident).Name, funcRet[k], token.DEFINE == stmt.Tok)
             }
         case *ast.IndexExpr:
             if 2 == len(stmt.Lhs) && 1 == len(stmt.Rhs) {
@@ -138,8 +141,8 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
                     kName := stmt.Lhs[0].(*ast.Ident).Obj.Name
                     vName := stmt.Lhs[1].(*ast.Ident).Obj.Name
                     kVar, vExist := target[idx]
-                    this.SetValue(kName, kVar)
-                    this.SetValue(vName, vExist)
+                    this.SetValue(kName, kVar, token.DEFINE == stmt.Tok)
+                    this.SetValue(vName, vExist, token.DEFINE == stmt.Tok)
                 default:
                     panic("syntax error: index exist assign stmt type error")
                 }
@@ -191,15 +194,14 @@ func (this *Stmt) CompileIncDecStmt(cpt *CompileCxt, stmt *ast.IncDecStmt) {
         panic("syntax error: nonsupport Tok ")
     }
 
-    expr := NewExpr()
     varName := stmt.X.(*ast.Ident).Name
     switch stmt.Tok {
     case token.INC:
-        this.SetValue(varName, expr.CompileExpr(cpt.DslCxt, this, stmt.X))
-        this.SetValue(varName, BInc(this.GetValue(varName)))
+        //this.SetValue(varName, expr.CompileExpr(cpt.DslCxt, this, stmt.X))
+        this.SetValue(varName, BInc(this.GetValue(varName)), false)
     case token.DEC:
-        this.SetValue(varName, expr.CompileExpr(cpt.DslCxt, this, stmt.X))
-        this.SetValue(varName, BDec(this.GetValue(varName)))
+        //this.SetValue(varName, expr.CompileExpr(cpt.DslCxt, this, stmt.X))
+        this.SetValue(varName, BDec(this.GetValue(varName)), false)
     default:
         panic("syntax error: nonsupport Tok ")
     }
@@ -216,16 +218,16 @@ func (this *Stmt) CompileRangeStmt(cpt *CompileCxt, stmt *ast.RangeStmt) {
     case []interface{}:
         for k, v := range rt {
             //设置kv的值
-            this.SetValue(kName, k)
-            this.SetValue(vName, v)
+            this.SetValue(kName, k, true)
+            this.SetValue(vName, v, true)
             //执行Body
             stmtHd.CompileStmt(cpt, stmt.Body)
         }
     case map[interface{}]interface{}:
         for k, v := range rt {
             //设置kv的值
-            this.SetValue(kName, k)
-            this.SetValue(vName, v)
+            this.SetValue(kName, k, true)
+            this.SetValue(vName, v, true)
             //执行Body
             stmtHd.CompileStmt(cpt, stmt.Body)
         }
