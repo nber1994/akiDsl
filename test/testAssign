@@ -1,6 +1,0 @@
-package main
-
-func main() {
-    var a int = 1
-    b := "nber1994"
-}
