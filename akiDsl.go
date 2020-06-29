@@ -42,7 +42,7 @@ func (this *AkiDsl) Run() (interface{}, *dslCxt.DslCxt, error){
     go func() {
         decl.CompileDecl(pct, d)
     }()
-    
+
     select {
     case ret = <-pct.ReturnCh:
     case retErr = <-pct.ErrCh:

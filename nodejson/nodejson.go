@@ -23,6 +23,10 @@ func UnmarshalToNode(data []byte) (Node, error) {
 	return node, nil
 }
 
+func (n *Node) Value() interface{} {
+    return n.data
+}
+
 func (n *Node) Marshal() ([]byte, error) {
 	return json.Marshal(n.data)
 
