@@ -44,6 +44,7 @@ func (n *Node) Get(link string) Node {
 
 func (n *Node) GetE(link string) (Node, error) {
 	linkarr := strings.Split(link, ".")
+	fmt.Println(linkarr)
 	l := len(linkarr)
 	var data = n.data
 	for i, k := range linkarr {
