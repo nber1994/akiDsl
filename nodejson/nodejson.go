@@ -34,6 +34,7 @@ func (n *Node) Marshal() ([]byte, error) {
 }
 
 func (n *Node) Get(link string) Node {
+    fmt.Println(n.data)
 	if node, err := n.GetE(link); err != nil {
 		return Node{}
 	} else {
