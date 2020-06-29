@@ -43,7 +43,6 @@ func (this *AkiDsl) Run() (interface{}, *dslCxt.DslCxt, error){
     select {
     case ret = <-pct.ReturnCh:
     case retErr = <-pct.ErrCh:
-    default:
     }
     //定义一个空方法，不然gc会在CompileDecl方法结束以后，把pct结构体回收 pct.Rescue()
     return ret, pct.DslCxt, retErr
