@@ -12,15 +12,12 @@ type AkiDsl struct {
     DslCxt *dslCxt.DslCxt//dsl与上下文的交互
 }
 
-func New(fileName *string, Cxt *string) (*AkiDsl, error) {
-    dslCxtNode, err := dslCxt.New(Cxt)
-    if nil != err {
-        return nil, err
-    }
+func New(fileName *string, Cxt *string) *AkiDsl {
+    dslCxtNode := dslCxt.New(Cxt)
     return &AkiDsl{
         FileName: fileName,
         DslCxt: dslCxtNode,
-    }, nil
+    }
 }
 
 func (this *AkiDsl) Run() (interface{}, *dslCxt.DslCxt, error){
