@@ -21,6 +21,7 @@ func New(originCxt *string) *DslCxt {
 func (this *DslCxt) Get(path string) interface{} {
     fmt.Println("....dsl orignCxt", *this.OriginCxt)
     Node, _ := nodejson.UnmarshalToNode([]byte(*this.OriginCxt))
+    fmt.Println("node.data", Node)
     value := Node.Get(path)
     fmt.Println("....dsl ", Node)
     fmt.Println("....dsl Get path ", path, " value ", value.Value())
