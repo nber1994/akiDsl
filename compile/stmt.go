@@ -159,7 +159,7 @@ func (this *Stmt) CompileForStmt(cpt *CompileCxt, stmt *ast.ForStmt) {
     fmt.Println("----------------in for stmt")
     stmtHd := this.NewChild()
     expr := NewExpr()
-    //编译初始条件
+    //初始条件
     this.CompileStmt(cpt, stmt.Init)
     for {
         if access := expr.CompileExpr(cpt.DslCxt, this, stmt.Cond); !cast.ToBool(access) {
