@@ -167,7 +167,7 @@ func (this *Stmt) CompileForStmt(cpt *CompileCxt, stmt *ast.ForStmt) {
         }
         //执行body
         stmtHd.CompileStmt(cpt, stmt.Body)
-        stmtHd.CompileStmt(cpt, stmt.Post)
+        this.CompileStmt(cpt, stmt.Post)
     }
 }
 
