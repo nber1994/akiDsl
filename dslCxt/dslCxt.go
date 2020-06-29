@@ -26,12 +26,12 @@ func New(originCxt *string) (*DslCxt, error) {
 //获取Cxt的值
 func (this *DslCxt) Get(path string) interface{} {
     value := this.Node.Get(path)
-    fmt.Println("....dsl Get path ", value)
+    fmt.Println("....dsl Get path ", path, " value ", value)
     return value
 }
 
 func (this *DslCxt) Set(path string, value interface{}) interface{} {
     this.Node.Set(path, value)
-    fmt.Println("....dsl Set path ", value)
+    fmt.Println("....dsl Set path ", path, " value ", value)
     return this.Get(path)
 }
