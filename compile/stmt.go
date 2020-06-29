@@ -95,7 +95,7 @@ func (this *Stmt) SetValue(name string, value interface{}, create bool) {
         }
     } else {
         //只在本节点内存中做校验
-        if !this.Rct.ValueExist(name) {
+        if !this.ValueExist(name) {
             panic("syntax error: undeclare var " + name)
         }
     }
