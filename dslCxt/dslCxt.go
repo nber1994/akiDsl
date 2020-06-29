@@ -26,6 +26,7 @@ func New(originCxt *string) (*DslCxt, error) {
 //获取Cxt的值
 func (this *DslCxt) Get(path string) interface{} {
     value := this.Node.Get(path)
+    fmt.Println("....dsl ", this.OriginCxt)
     fmt.Println("....dsl Get path ", path, " value ", value)
     return value.Value()
 }
