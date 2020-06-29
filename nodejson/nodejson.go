@@ -46,8 +46,6 @@ func (n *Node) GetE(link string) (Node, error) {
 	linkarr := strings.Split(link, ".")
 	l := len(linkarr)
 	var data = n.data
-	_, okk := data.(map[string]interface{})
-	fmt.Println(okk)
 	for i, k := range linkarr {
 		if i == l {
 			if data == nil {
@@ -56,6 +54,7 @@ func (n *Node) GetE(link string) (Node, error) {
 			return Node{data: data}, nil
 		}
 		dataMap, ok := data.(map[string]interface{})
+		fmt.Println(ok, dataMap)
 		if !ok {
 			return Node{}, fmt.Errorf("node %v is last node", data)
 		}
