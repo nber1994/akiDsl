@@ -12,6 +12,7 @@ type Node struct {
 }
 
 func UnmarshalToNode(data []byte) (Node, error) {
+    fmt.Println(string(data))
 	node := Node{}
 	dec := json.NewDecoder(bytes.NewBuffer(data))
 	dec.UseNumber()
