@@ -1,7 +1,6 @@
 package compile
 
 import (
-    "github.com/nber1994/akiDsl/runCxt"
     "github.com/nber1994/akiDsl/dslCxt"
     "go/token"
     "go/ast"
@@ -18,7 +17,7 @@ func NewExpr() *Expr {
     return &Expr{}
 }
 
-func (this *Expr) CompileExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r ast.Expr) interface{} {
+func (this *Expr) CompileExpr(dct *dslCxt.DslCxt, rct *Stmt, r ast.Expr) interface{} {
     var ret interface{}
     switch r := r.(type) {
     case *ast.BasicLit: //基本类型
@@ -47,7 +46,7 @@ func (this *Expr) CompileExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r ast.Expr
 }
 
 //index操作
-func (this *Expr) CompileIndexExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.IndexExpr) interface{} {
+func (this *Expr) CompileIndexExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.IndexExpr) interface{} {
     fmt.Println("------------------------in Index expr")
     var ret interface{}
     target := this.CompileExpr(dct, rct, r.X)
@@ -64,7 +63,7 @@ func (this *Expr) CompileIndexExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *as
 }
 
 //内置函数 MethodByName会panic
-func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.CallExpr) interface{} {
+func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr) interface{} {
     fmt.Println("------------------------in Call expr")
     var ret interface{}
     //校验内置函数
@@ -82,7 +81,7 @@ func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast
 }
 
 //处理多返回值函数
-func (this *Expr) CompileCallMultiReturnExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.CallExpr) []interface{} {
+func (this *Expr) CompileCallMultiReturnExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr) []interface{} {
     fmt.Println("------------------------in Call multi expr")
     funcLib := NewFuncLib()
     var ret []interface{}
@@ -100,7 +99,7 @@ func (this *Expr) CompileCallMultiReturnExpr(dct *dslCxt.DslCxt, rct *runCxt.Run
     return ret
 }
 
-func (this *Expr) CompileBasicLitExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.BasicLit) interface{} {
+func (this *Expr) CompileBasicLitExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.BasicLit) interface{} {
     fmt.Println("------------------------in basiclit expr")
     var ret interface{}
     switch r.Kind {
@@ -117,7 +116,7 @@ func (this *Expr) CompileBasicLitExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r 
     return ret
 }
 
-func (this *Expr) CompileArrayExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.CompositeLit) interface{} {
+func (this *Expr) CompileArrayExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CompositeLit) interface{} {
     fmt.Println("------------------------in array expr")
     var ret []interface{}
     for _, e := range r.Elts {
@@ -138,7 +137,7 @@ func (this *Expr) CompileArrayExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *as
     return ret
 }
 
-func (this *Expr) CompileMapExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.CompositeLit) interface{} {
+func (this *Expr) CompileMapExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CompositeLit) interface{} {
     fmt.Println("------------------------in map expr")
     ret := make(map[interface{}]interface{})
     var key interface{}
@@ -152,14 +151,14 @@ func (this *Expr) CompileMapExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.
 }
 
 
-func (this *Expr) CompileIdentExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.Ident) interface{} {
+func (this *Expr) CompileIdentExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.Ident) interface{} {
     fmt.Println("------------------------in ident expr")
     var ret interface{}
     ret = rct.GetValue(r.Name)
     return ret
 }
 
-func (this *Expr) CompileBinaryExpr(dct *dslCxt.DslCxt, rct *runCxt.RunCxt, r *ast.BinaryExpr) interface{} {
+func (this *Expr) CompileBinaryExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.BinaryExpr) interface{} {
     fmt.Println("------------------------in binary expr")
     var ret interface{}
     switch r.Op {
