@@ -49,9 +49,23 @@ func (this *Stmt) CompileStmt(cpt *CompileCxt, stmt ast.Stmt) {
         cStmt.CompileReturnStmt(cpt, stmt)
     case *ast.BlockStmt:
         cStmt.CompileBlockStmt(cpt, stmt)
+    case *ast.ExprStmt:
+        cStmt.CompileExprStmt(cpt, stmt)
     default:
         panic("syntax error: nonsupport stmt ")
     }
+}
+
+//表达式stmt，目前只支持callExpr
+func (this *Stmt) CompileExprStmt(cpt *CompileCxt, stmt *ast.ExprStmt) {
+	expr := NewExpr()
+	switch X := stmt.X.(type) {
+	case *ast.CallExpr:
+		expr.CompileExpr(cpt.DslCxt, this, X)
+	default:
+        panic("syntax error: nonsupport expr stmt expr")
+
+	}
 }
 
 func (this *Stmt) CompileBlockStmt(cpt *CompileCxt, stmt *ast.BlockStmt) {
