@@ -74,7 +74,6 @@ func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr
         funcArgs = append(funcArgs, reflect.ValueOf(this.CompileExpr(dct, rct, arg)))
     }
     fmt.Println("------------------------in Call expr args", funcArgs)
-    fmt.Println("------------------------in Call expr dsl", *dct.OriginCxt)
     res := reflect.ValueOf(dct).MethodByName(funcName).Call(funcArgs)
     if nil == res {
         return ret

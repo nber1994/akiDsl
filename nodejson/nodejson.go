@@ -16,6 +16,7 @@ func UnmarshalToNode(data []byte) (Node, error) {
 	dec := json.NewDecoder(bytes.NewBuffer(data))
 	dec.UseNumber()
 	err := dec.Decode(&node.data)
+    fmt.Println(node.data)
 	if err != nil {
 		return Node{}, err
 	}
