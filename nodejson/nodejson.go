@@ -54,7 +54,7 @@ func (n *Node) GetE(link string) (Node, error) {
 			return Node{data: data}, nil
 		}
 		dataMap, ok := data.(map[string]interface{})
-		fmt.Println(ok, dataMap)
+		fmt.Println(ok, dataMap, k)
 		if !ok {
 			return Node{}, fmt.Errorf("node %v is last node", data)
 		}
