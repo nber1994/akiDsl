@@ -6,14 +6,14 @@ import (
 )
 
 type DslCxt struct {
-    OriginCxt *string //原始上下文
+    OriginCxt string //原始上下文
     Node nodejson.Node //动态json节点
 }
 
 
-func New(originCxt *string) (*DslCxt, error) {
-    node, err := nodejson.UnmarshalToNode([]byte(*originCxt))
-    fmt.Println("....dsl ", *originCxt)
+func New(originCxt string) (*DslCxt, error) {
+    node, err := nodejson.UnmarshalToNode([]byte(originCxt))
+    fmt.Println("....dsl ", originCxt)
     if err != nil {
         return nil, err
     }

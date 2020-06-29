@@ -13,7 +13,7 @@ type AkiDsl struct {
 }
 
 func New(fileName *string, Cxt *string) (*AkiDsl, error) {
-    dslCxtNode, err := dslCxt.New(Cxt)
+    dslCxtNode, err := dslCxt.New(*Cxt)
     if nil != err {
         return nil, err
     }
