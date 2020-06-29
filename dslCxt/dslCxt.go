@@ -7,7 +7,7 @@ import (
 
 type DslCxt struct {
     OriginCxt string //原始上下文
-    Node nodejson.Node //动态json节点
+    Node *nodejson.Node //动态json节点
 }
 
 
@@ -20,7 +20,7 @@ func New(originCxt string) (*DslCxt, error) {
 
     return &DslCxt{
         OriginCxt: originCxt,
-        Node: node,
+        Node: &node,
     }, nil
 }
 
