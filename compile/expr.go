@@ -73,6 +73,7 @@ func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr
     for _, arg := range r.Args {
         funcArgs = append(funcArgs, reflect.ValueOf(this.CompileExpr(dct, rct, arg)))
     }
+    fmt.Println("------------------------in Call expr args", funcArgs)
     res := reflect.ValueOf(dct).MethodByName(funcName).Call(funcArgs)
     if nil == res {
         return ret
