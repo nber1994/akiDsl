@@ -28,7 +28,7 @@ func New(originCxt string) (*DslCxt, error) {
 func (this *DslCxt) Get(path string) interface{} {
     value := this.Node.Get(path)
     fmt.Println("....dsl ", this.OriginCxt)
-    fmt.Println("....dsl Get path ", path, " value ", value)
+    fmt.Println("....dsl Get path ", path, " value ", value.Value())
     return value.Value()
 }
 
