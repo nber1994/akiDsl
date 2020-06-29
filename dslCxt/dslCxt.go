@@ -19,7 +19,7 @@ func New(originCxt string) (*DslCxt, error) {
 
     return &DslCxt{
         OriginCxt: originCxt,
-        Node: &node,
+        Node: node,
     }, nil
 }
 
