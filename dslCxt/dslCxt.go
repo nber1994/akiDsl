@@ -13,7 +13,7 @@ type DslCxt struct {
 
 func New(originCxt *string) (*DslCxt, error) {
     node, err := nodejson.UnmarshalToNode([]byte(*originCxt))
-    fmt.Println("....dsl ", originCxt)
+    fmt.Println("....dsl ", *originCxt)
     if err != nil {
         return nil, err
     }
