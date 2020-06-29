@@ -74,32 +74,34 @@ func (this *Stmt) GetValue(name string) interface{} {
     panic("syntax error: non-reachable var " + name)
 }
 
-func (this *Stmt) ValueExist(name string) bool {
-    ret := false
+func (this *Stmt) ValueExist(name string) (bool, *Stmt) {
     stmt := this
     for nil != stmt {
         fmt.Println("now stmt rct is ", stmt.Rct.ToString())
         if _, exist := stmt.Rct.Vars[name]; exist {
-            ret = true
+            return true, stmt
         }
         stmt = stmt.Father
     }
-    return ret
+    return false, nil
 }
 
 func (this *Stmt) SetValue(name string, value interface{}, create bool) {
     if create {
         //只在本节点内存中做校验
-        if this.Rct.ValueExist(name) {
+        if exist := this.Rct.ValueExist(name); exist {
             panic("syntax error: redeclare var " + name)
+        } else {
+            this.Rct.SetValue(name, value)
         }
     } else {
         //只在本节点内存中做校验
-        if !this.ValueExist(name) {
+        if exist, node := this.ValueExist(name); !exist {
             panic("syntax error: undeclare var " + name)
+        } else {
+            node.Rct.SetValue(name, value)
         }
     }
-    this.Rct.SetValue(name, value)
 }
 
 func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
