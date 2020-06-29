@@ -71,7 +71,7 @@ func (this *Stmt) GetValue(name string) interface{} {
         }
         stmt = stmt.Father
     }
-    panic("syntax error: non-reachable var")
+    panic("syntax error: non-reachable var" + name)
 }
 
 func (this *Stmt) SetValue(name string, value interface{}, create bool) {
