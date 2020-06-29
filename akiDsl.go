@@ -13,7 +13,7 @@ type AkiDsl struct {
 }
 
 func New(fileName *string, Cxt *string) *AkiDsl {
-    dslCxtNode := dslCxt.New(Cxt)
+    dslCxtNode := dslCxt.New(*Cxt)
     return &AkiDsl{
         FileName: fileName,
         DslCxt: dslCxtNode,
