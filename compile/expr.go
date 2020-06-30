@@ -14,6 +14,10 @@ type Expr struct {
 
 }
 
+var (
+    SupFuncList = map[string]string{"append":"Append"}
+)
+
 func NewExpr() *Expr {
     return &Expr{}
 }
@@ -78,7 +82,13 @@ func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr
         funcArgs = append(funcArgs, reflect.ValueOf(this.CompileExpr(dct, rct, arg)))
     }
     fmt.Println("------------------------in Call expr args", funcArgs)
-    res := reflect.ValueOf(dct).MethodByName(funcName).Call(funcArgs)
+    var res []reflect.Value
+    if RealFuncName, exist:= SupFuncList[funcName]; exist {
+        flib := NewFuncLib()
+        res = reflect.ValueOf(flib).MethodByName(RealFuncName).Call(funcArgs)
+    } else {
+        res = reflect.ValueOf(dct).MethodByName(funcName).Call(funcArgs)
+    }
     if nil == res {
         return ret
     }

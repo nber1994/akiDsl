@@ -8,6 +8,6 @@ func NewFuncLib() *FuncLib {
     return &FuncLib{}
 }
 
-func (this *FuncLib) append(target []interface{}, item interface{}) interface{} {
+func (this *FuncLib) Append(target []interface{}, item interface{}) interface{} {
     return append(target, item)
 }
