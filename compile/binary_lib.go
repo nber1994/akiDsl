@@ -35,7 +35,7 @@ func BAdd(l interface{}, r interface{}) interface{} {
 		return l + cast.ToString(r)
 
 	default:
-        panic(fmt.Sprintf("syntax error: bad binary type= %#v \n", l))
+        panic(fmt.Sprintf("syntax error: bad binary add type= %#v \n", l))
 	}
     var ret interface{}
     return ret
