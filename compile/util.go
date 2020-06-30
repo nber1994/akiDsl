@@ -2,9 +2,11 @@ package compile
 
 import (
     "reflect"
+    "fmt"
 )
 
 func ReflectValueRealTypeValue(v reflect.Value) interface{} {
+    fmt.Println(v.Kind())
 
     switch v.Kind() {
     case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
