@@ -24,6 +24,7 @@ func New(originCxt *string) (*DslCxt, error) {
 
 func (this *DslCxt) ToJsonString() string {
     ret, _ := this.Node.ToJsonString()
+    return ret
 }
 
 //获取Cxt的值
