@@ -1,5 +1,5 @@
 # akiDsl
-一个golang语法的dsl脚本解释器
+一个golang语法dsl的脚本解释器
 
 ## Install
 ````
