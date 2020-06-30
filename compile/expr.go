@@ -15,7 +15,11 @@ type Expr struct {
 }
 
 var (
-    SupFuncList = map[string]string{"append":"Append", "len":"Len"}
+    SupFuncList = map[string]string{
+        "append":"Append",
+        "len":"Len",
+        "timeParse":"TimeParse",
+    }
 )
 
 func NewExpr() *Expr {
