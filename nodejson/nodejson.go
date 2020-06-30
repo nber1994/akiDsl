@@ -59,7 +59,7 @@ func (n *Node) GetE(link string) (Node, error) {
 			}
 			return Node{data: data}, nil
 		}
-		dataMap, ok := data.(map[string]interface{})
+		dataMap, ok := data.(map[interface{}]interface{})
 		if !ok {
 			return Node{}, fmt.Errorf("node %v is last node", data)
 		}
