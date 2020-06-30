@@ -22,6 +22,14 @@ func UnmarshalToNode(data []byte) (Node, error) {
 	return node, nil
 }
 
+func (n *Node) ToJsonString() (string, error) {
+    ret, err := json.Marshal(n.data)
+    if err != nil {
+        return "", err
+    }
+    return string(ret), nil
+}
+
 
 func (n *Node) Value() interface{} {
 	return n.data

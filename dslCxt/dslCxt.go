@@ -22,6 +22,10 @@ func New(originCxt *string) (*DslCxt, error) {
     }, nil
 }
 
+func (this *DslCxt) ToJsonString() (string, error) {
+    return this.Node.ToJsonString()
+}
+
 //获取Cxt的值
 func (this *DslCxt) Get(path string) interface{} {
     value := this.Node.Get(path)
