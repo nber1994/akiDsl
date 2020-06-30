@@ -33,6 +33,8 @@ func BAdd(l interface{}, r interface{}) interface{} {
 		return l + cast.ToFloat64(r)
 	case string:
 		return l + cast.ToString(r)
+	case interface{}:
+        fmt.Println("fuck")
 
 	default:
         panic(fmt.Sprintf("syntax error: bad binary add type= %#v \n", l))
