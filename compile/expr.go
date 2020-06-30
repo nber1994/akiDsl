@@ -19,6 +19,8 @@ var (
         "append":"Append",
         "len":"Len",
         "timeParse":"TimeParse",
+        "println":"Println",
+        "sprintf":"Sprintf",
     }
 )
 
