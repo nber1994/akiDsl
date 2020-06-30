@@ -15,7 +15,7 @@ type Expr struct {
 }
 
 var (
-    SupFuncList = map[string]string{"append":"Append"}
+    SupFuncList = map[string]string{"append":"Append", "len":"Len"}
 )
 
 func NewExpr() *Expr {
@@ -47,8 +47,33 @@ func (this *Expr) CompileExpr(dct *dslCxt.DslCxt, rct *Stmt, r ast.Expr) interfa
         ret = this.CompileIdentExpr(dct, rct, r)
     case *ast.IndexExpr:
         ret = this.CompileIndexExpr(dct, rct, r)
+    case *ast.SliceExpr:
+        ret = this.CompileSliceExpr(dct, rct, r)
     default:
         panic("syntax error: nonsupport expr type")
+    }
+    return ret
+}
+
+func (this *Expr) CompileSliceExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.SliceExpr) interface{} {
+    fmt.Println("------------------------in Slice expr")
+    var ret interface{}
+    x := this.CompileExpr(dct, rct, r.X)
+    low := this.CompileExpr(dct, rct, r.Low)
+    high := this.CompileExpr(dct, rct, r.High)
+    switch x := x.(type) {
+    case []interface{}:
+        if nil != low && nil != high {
+            ret = x[cast.ToInt(low):cast.ToInt(high)]
+        } else if nil == low && nil != high {
+            ret = x[:cast.ToInt(high)]
+        } else if nil != low && nil == high {
+            ret = x[cast.ToInt(low):]
+        } else if nil == low && nil == high {
+            ret = x[:]
+        }
+    default:
+        panic("syntax error: nonsupport slice type")
     }
     return ret
 }

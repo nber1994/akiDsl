@@ -206,7 +206,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
                 panic("syntax error: assign type error")
             }
         }
-    } else if len(stmt.Lhs) > len(stmt.Rhs) && 1 == len(stmt.Rhs){
+    } else if len(stmt.Lhs) > len(stmt.Rhs) && 1 == len(stmt.Rhs) {
         //声明语句不能嵌套，如果Rhs的元素是方法，则执行多返回值编译逻辑
         r := stmt.Rhs[0]
         switch r := r.(type) {
@@ -244,7 +244,8 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
 				}
 			}
         }
-
+    } else {
+        panic("syntax error: nonsupport assign nums")
     }
 }
 
