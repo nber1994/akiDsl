@@ -12,6 +12,7 @@ type Stmt struct{
     Rct *runCxt.RunCxt //变量作用空间
     Type int
     Father *Stmt //子节点可以访问到父节点的内存空间
+    Fset *ast.File
 }
 
 func NewStmt() *Stmt {
@@ -66,12 +67,12 @@ func (this *Stmt) CompileStmt(cpt *CompileCxt, stmt ast.Stmt) {
 //				if len(spec.Values) == len(spec.Names) {
 //					for i, n := range spec.Names {
 //						v := spec.Values[i]
-//						this.SetValue(n.(*ast.Ident).Name, expr.CompileExpr(cpt.DslCxt, this, v), true)
+//						this.SetValue(n.(*ast.Ident).Name, expr.CompileExpr(cpt, this, v), true)
 //					}
 //				} else if len(spec.Names) > len(spec.Values) && 1 == len(spec.Values) {
 //					for i, n := range spec.Names {
 //						v := spec.Values[0]
-//						this.SetValue(n.(*ast.Ident).Name, expr.CompileExpr(cpt.DslCxt, this, v), true)
+//						this.SetValue(n.(*ast.Ident).Name, expr.CompileExpr(cpt, this, v), true)
 //					}
 //
 //				} else {
@@ -97,7 +98,7 @@ func (this *Stmt) CompileStmt(cpt *CompileCxt, stmt ast.Stmt) {
 //					case "bool":
 //						var v bool
 //					}
-//					this.SetValue(n.(*ast.Ident).Name, expr.CompileExpr(cpt.DslCxt, this, v), true)
+//					this.SetValue(n.(*ast.Ident).Name, expr.CompileExpr(cpt, this, v), true)
 //				}
 //			}
 //		default:
@@ -111,7 +112,7 @@ func (this *Stmt) CompileExprStmt(cpt *CompileCxt, stmt *ast.ExprStmt) {
 	expr := NewExpr()
 	switch X := stmt.X.(type) {
 	case *ast.CallExpr:
-		expr.CompileExpr(cpt.DslCxt, this, X)
+		expr.CompileExpr(cpt, this, X)
 	default:
         panic("syntax error: nonsupport expr stmt expr")
 
@@ -182,19 +183,19 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
             switch l := l.(type) {
             case *ast.Ident:
                 r := stmt.Rhs[idx]
-                this.SetValue(l.Name, expr.CompileExpr(cpt.DslCxt, this, r), token.DEFINE == stmt.Tok)
+                this.SetValue(l.Name, expr.CompileExpr(cpt, this, r), token.DEFINE == stmt.Tok)
             case *ast.IndexExpr:
                 r := stmt.Rhs[idx]
-                target := expr.CompileExpr(cpt.DslCxt, this, l.X)
-                idx := expr.CompileExpr(cpt.DslCxt, this, l.Index)
+                target := expr.CompileExpr(cpt, this, l.X)
+                idx := expr.CompileExpr(cpt, this, l.Index)
                 switch target := target.(type) {
                 case map[interface{}]interface{}:
-                    target[idx] = expr.CompileExpr(cpt.DslCxt, this, r)
+                    target[idx] = expr.CompileExpr(cpt, this, r)
                     this.SetValue(l.X.(*ast.Ident).Name, target, false)
                 case []interface{}:
                     switch idx := idx.(type) {
                     case int:
-                        target[idx] = expr.CompileExpr(cpt.DslCxt, this, r)
+                        target[idx] = expr.CompileExpr(cpt, this, r)
                     default:
                         panic("syntax error: index type error")
                     }
@@ -211,7 +212,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
         r := stmt.Rhs[0]
         switch r := r.(type) {
         case *ast.CallExpr:
-            funcRet := expr.CompileCallMultiReturnExpr(cpt.DslCxt, this, r)
+            funcRet := expr.CompileCallMultiReturnExpr(cpt, this, r)
             if len(funcRet) != len(funcRet) {
                 panic("syntax error: func return can not match")
             }
@@ -221,10 +222,10 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
         case *ast.IndexExpr:
             if 2 == len(stmt.Lhs) && 1 == len(stmt.Rhs) {
                 //处理v, exist := a[b]的情况
-                target := expr.CompileExpr(cpt.DslCxt, this, stmt.Rhs[0].(*ast.IndexExpr).X)
+                target := expr.CompileExpr(cpt, this, stmt.Rhs[0].(*ast.IndexExpr).X)
                 switch target := target.(type) {
                 case map[interface{}]interface{}:
-                    idx := expr.CompileExpr(cpt.DslCxt, this, stmt.Rhs[0].(*ast.IndexExpr).Index)
+                    idx := expr.CompileExpr(cpt, this, stmt.Rhs[0].(*ast.IndexExpr).Index)
                     kName := stmt.Lhs[0].(*ast.Ident).Obj.Name
                     vName := stmt.Lhs[1].(*ast.Ident).Obj.Name
                     kVar, vExist := target[idx]
@@ -238,7 +239,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
 			for _, l := range stmt.Lhs {
 				switch l := l.(type) {
 				case *ast.Ident:
-					this.SetValue(l.Name, expr.CompileExpr(cpt.DslCxt, this, r), token.DEFINE == stmt.Tok)
+					this.SetValue(l.Name, expr.CompileExpr(cpt, this, r), token.DEFINE == stmt.Tok)
 				default:
                     panic("syntax error: index exist assign stmt type error")
 				}
@@ -257,7 +258,7 @@ func (this *Stmt) CompileForStmt(cpt *CompileCxt, stmt *ast.ForStmt) {
     //初始条件
     this.CompileStmt(cpt, stmt.Init)
     for {
-        if access := expr.CompileExpr(cpt.DslCxt, this, stmt.Cond); !cast.ToBool(access) {
+        if access := expr.CompileExpr(cpt, this, stmt.Cond); !cast.ToBool(access) {
             break;
         }
         //执行body
@@ -272,7 +273,7 @@ func (this *Stmt) CompileIfStmt(cpt *CompileCxt, stmt *ast.IfStmt) {
     expr := NewExpr()
     //赋值操作,在本节点赋值
     this.CompileStmt(cpt, stmt.Init)
-    condRet := expr.CompileExpr(cpt.DslCxt, this, stmt.Cond)
+    condRet := expr.CompileExpr(cpt, this, stmt.Cond)
     //如果条件成立
     if cast.ToBool(condRet) {
         stmtHd.CompileStmt(cpt, stmt.Body)
@@ -292,10 +293,10 @@ func (this *Stmt) CompileIncDecStmt(cpt *CompileCxt, stmt *ast.IncDecStmt) {
     varName := stmt.X.(*ast.Ident).Name
     switch stmt.Tok {
     case token.INC:
-        //this.SetValue(varName, expr.CompileExpr(cpt.DslCxt, this, stmt.X))
+        //this.SetValue(varName, expr.CompileExpr(cpt, this, stmt.X))
         this.SetValue(varName, BInc(this.GetValue(varName)), false)
     case token.DEC:
-        //this.SetValue(varName, expr.CompileExpr(cpt.DslCxt, this, stmt.X))
+        //this.SetValue(varName, expr.CompileExpr(cpt, this, stmt.X))
         this.SetValue(varName, BDec(this.GetValue(varName)), false)
     default:
         panic("syntax error: nonsupport Tok ")
@@ -306,7 +307,7 @@ func (this *Stmt) CompileRangeStmt(cpt *CompileCxt, stmt *ast.RangeStmt) {
     //fmt.Println("----------------in range stmt")
     expr := NewExpr()
     stmtHd := this.NewChild()
-    RangeTarget := expr.CompileExpr(cpt.DslCxt, this, stmt.Key.(*ast.Ident).Obj.Decl.(*ast.AssignStmt).Rhs[0].(*ast.UnaryExpr).X)
+    RangeTarget := expr.CompileExpr(cpt, this, stmt.Key.(*ast.Ident).Obj.Decl.(*ast.AssignStmt).Rhs[0].(*ast.UnaryExpr).X)
     kName := stmt.Key.(*ast.Ident).Name
     vName := stmt.Key.(*ast.Ident).Obj.Decl.(*ast.AssignStmt).Lhs[1].(*ast.Ident).Name
     switch rt := RangeTarget.(type) {
@@ -337,7 +338,7 @@ func (this *Stmt) CompileReturnStmt(cpt *CompileCxt, stmt *ast.ReturnStmt) {
     var ret interface{}
     expr := NewExpr()
     e := stmt.Results[0]
-    ret = expr.CompileExpr(cpt.DslCxt, this, e)
+    ret = expr.CompileExpr(cpt, this, e)
     //fmt.Println("----------------return ", ret)
     cpt.ReturnCh <- ret
 }

@@ -22,52 +22,51 @@ var (
         "println":"Println",
         "sprintf":"Sprintf",
     }
-    fset = token.NewFileSet()
 )
 
 func NewExpr() *Expr {
     return &Expr{}
 }
 
-func (this *Expr) CompileExpr(dct *dslCxt.DslCxt, rct *Stmt, r ast.Expr) interface{} {
+func (this *Expr) CompileExpr(cpt *CompileCxt, rct *Stmt, r ast.Expr) interface{} {
     var ret interface{}
 	if nil == r {
 		return ret
 	}
     switch r := r.(type) {
     case *ast.BasicLit: //基本类型
-        ret = this.CompileBasicLitExpr(dct, rct, r)
+        ret = this.CompileBasicLitExpr(cpt, rct, r)
     case *ast.BinaryExpr: //二元表达式
-        ret = this.CompileBinaryExpr(dct, rct, r)
+        ret = this.CompileBinaryExpr(cpt, rct, r)
     case *ast.CompositeLit: //集合类型
         switch  r.Type.(type) {
         case *ast.ArrayType: //数组
-            ret = this.CompileArrayExpr(dct, rct, r)
+            ret = this.CompileArrayExpr(cpt, rct, r)
         case *ast.MapType: //map
-            ret = this.CompileMapExpr(dct, rct, r)
+            ret = this.CompileMapExpr(cpt, rct, r)
         default:
             panic("syntax error: nonsupport expr type")
         }
     case *ast.CallExpr:
-        ret = this.CompileCallExpr(dct, rct, r)
+        ret = this.CompileCallExpr(cpt, rct, r)
     case *ast.Ident:
-        ret = this.CompileIdentExpr(dct, rct, r)
+        ret = this.CompileIdentExpr(cpt, rct, r)
     case *ast.IndexExpr:
-        ret = this.CompileIndexExpr(dct, rct, r)
+        ret = this.CompileIndexExpr(cpt, rct, r)
     case *ast.SliceExpr:
-        ret = this.CompileSliceExpr(dct, rct, r)
+        ret = this.CompileSliceExpr(cpt, rct, r)
     default:
         panic("syntax error: nonsupport expr type")
     }
     return ret
 }
 
-func (this *Expr) CompileSliceExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.SliceExpr) interface{} {
+func (this *Expr) CompileSliceExpr(cpt *CompileCxt, rct *Stmt, r *ast.SliceExpr) interface{} {
     //fmt.Println("------------------------in Slice expr")
     var ret interface{}
-    x := this.CompileExpr(dct, rct, r.X)
-    low := this.CompileExpr(dct, rct, r.Low)
-    high := this.CompileExpr(dct, rct, r.High)
+    x := this.CompileExpr(cpt, rct, r.X)
+    low := this.CompileExpr(cpt, rct, r.Low)
+    high := this.CompileExpr(cpt, rct, r.High)
     switch x := x.(type) {
     case []interface{}:
         if nil != low && nil != high {
@@ -86,11 +85,11 @@ func (this *Expr) CompileSliceExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.SliceEx
 }
 
 //index操作
-func (this *Expr) CompileIndexExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.IndexExpr) interface{} {
+func (this *Expr) CompileIndexExpr(cpt *CompileCxt, rct *Stmt, r *ast.IndexExpr) interface{} {
     //fmt.Println("------------------------in Index expr")
     var ret interface{}
-    target := this.CompileExpr(dct, rct, r.X)
-    index := this.CompileExpr(dct, rct, r.Index)
+    target := this.CompileExpr(cpt, rct, r.X)
+    index := this.CompileExpr(cpt, rct, r.Index)
     switch target := target.(type) {
     case []interface{}:
         ret = target[cast.ToInt(index)]
@@ -103,7 +102,7 @@ func (this *Expr) CompileIndexExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.IndexEx
 }
 
 //内置函数 MethodByName会panic
-func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr) interface{} {
+func (this *Expr) CompileCallExpr(cpt *CompileCxt, rct *Stmt, r *ast.CallExpr) interface{} {
     //fmt.Println("------------------------in Call expr")
     var ret interface{}
     //校验内置函数
@@ -112,7 +111,7 @@ func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr
     //fmt.Println("------------------------in Call expr ", funcName)
     //初始化入参
     for _, arg := range r.Args {
-        funcArgs = append(funcArgs, reflect.ValueOf(this.CompileExpr(dct, rct, arg)))
+        funcArgs = append(funcArgs, reflect.ValueOf(this.CompileExpr(cpt, rct, arg)))
     }
     //fmt.Println("------------------------in Call expr args", funcArgs)
     var res []reflect.Value
@@ -120,9 +119,9 @@ func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr
         flib := NewFuncLib()
         res = reflect.ValueOf(flib).MethodByName(RealFuncName).Call(funcArgs)
     } else if CxtFuncName, cxtExist := dslCxt.SupFuncList[funcName]; cxtExist {
-        res = reflect.ValueOf(dct).MethodByName(CxtFuncName).Call(funcArgs)
+        res = reflect.ValueOf(cpt.DslCxt).MethodByName(CxtFuncName).Call(funcArgs)
     } else {
-        panic(fmt.Sprintf("syntax error: nonsupport func name %v", fset.Position(r.Pos())))
+        panic(fmt.Sprintf("syntax error: nonsupport func name %v", cpt.Fset.Position(r.Pos())))
     }
     if nil == res {
         return ret
@@ -131,7 +130,7 @@ func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr
 }
 
 //处理多返回值函数
-func (this *Expr) CompileCallMultiReturnExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr) []interface{} {
+func (this *Expr) CompileCallMultiReturnExpr(cpt *CompileCxt, rct *Stmt, r *ast.CallExpr) []interface{} {
     //fmt.Println("------------------------in Call multi expr")
     funcLib := NewFuncLib()
     var ret []interface{}
@@ -140,7 +139,7 @@ func (this *Expr) CompileCallMultiReturnExpr(dct *dslCxt.DslCxt, rct *Stmt, r *a
     funcName := r.Fun.(*ast.Ident).Name
     //初始化入参
     for _, arg := range r.Args {
-        funcArgs = append(funcArgs, reflect.ValueOf(this.CompileExpr(dct, rct, arg)))
+        funcArgs = append(funcArgs, reflect.ValueOf(this.CompileExpr(cpt, rct, arg)))
     }
     res := reflect.ValueOf(funcLib).MethodByName(funcName).Call(funcArgs)
     for _, v := range res {
@@ -149,7 +148,7 @@ func (this *Expr) CompileCallMultiReturnExpr(dct *dslCxt.DslCxt, rct *Stmt, r *a
     return ret
 }
 
-func (this *Expr) CompileBasicLitExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.BasicLit) interface{} {
+func (this *Expr) CompileBasicLitExpr(cpt *CompileCxt, rct *Stmt, r *ast.BasicLit) interface{} {
     //fmt.Println("------------------------in basiclit expr")
     var ret interface{}
     switch r.Kind {
@@ -172,20 +171,20 @@ func (this *Expr) CompileBasicLitExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.Basi
     return ret
 }
 
-func (this *Expr) CompileArrayExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CompositeLit) interface{} {
+func (this *Expr) CompileArrayExpr(cpt *CompileCxt, rct *Stmt, r *ast.CompositeLit) interface{} {
     //fmt.Println("------------------------in array expr")
     var ret []interface{}
     for _, e := range r.Elts {
         switch e := e.(type) {
         case *ast.BasicLit:
-            ret = append(ret, this.CompileExpr(dct, rct, e))
+            ret = append(ret, this.CompileExpr(cpt, rct, e))
         case *ast.CompositeLit:
             //拼接结构体
             compLit := &ast.CompositeLit{
                 Type: r.Type.(*ast.ArrayType).Elt,
                 Elts: e.Elts,
             }
-            ret = append(ret, this.CompileExpr(dct, rct, compLit))
+            ret = append(ret, this.CompileExpr(cpt, rct, compLit))
         default:
             panic("syntax error: bad array item type")
         }
@@ -193,63 +192,63 @@ func (this *Expr) CompileArrayExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.Composi
     return ret
 }
 
-func (this *Expr) CompileMapExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CompositeLit) interface{} {
+func (this *Expr) CompileMapExpr(cpt *CompileCxt, rct *Stmt, r *ast.CompositeLit) interface{} {
     //fmt.Println("------------------------in map expr")
     ret := make(map[interface{}]interface{})
     var key interface{}
     var value interface{}
     for _, e := range r.Elts {
-        key = this.CompileExpr(dct, rct, e.(*ast.KeyValueExpr).Key)
-        value = this.CompileExpr(dct, rct, e.(*ast.KeyValueExpr).Value)
+        key = this.CompileExpr(cpt, rct, e.(*ast.KeyValueExpr).Key)
+        value = this.CompileExpr(cpt, rct, e.(*ast.KeyValueExpr).Value)
         ret[key] = value
     }
     return ret
 }
 
 
-func (this *Expr) CompileIdentExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.Ident) interface{} {
+func (this *Expr) CompileIdentExpr(cpt *CompileCxt, rct *Stmt, r *ast.Ident) interface{} {
     //fmt.Println("------------------------in ident expr")
     var ret interface{}
     ret = rct.GetValue(r.Name)
     return ret
 }
 
-func (this *Expr) CompileBinaryExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.BinaryExpr) interface{} {
+func (this *Expr) CompileBinaryExpr(cpt *CompileCxt, rct *Stmt, r *ast.BinaryExpr) interface{} {
     //fmt.Println("------------------------in binary expr")
     var ret interface{}
     switch r.Op {
         //+ - * / %
     case token.ADD:
-        ret = BAdd(this.CompileExpr(dct, rct, r.X), this.CompileExpr(dct, rct, r.Y))
+        ret = BAdd(this.CompileExpr(cpt, rct, r.X), this.CompileExpr(cpt, rct, r.Y))
     case token.SUB:
-        ret = BSub(this.CompileExpr(dct, rct, r.X), this.CompileExpr(dct, rct, r.Y))
+        ret = BSub(this.CompileExpr(cpt, rct, r.X), this.CompileExpr(cpt, rct, r.Y))
     case token.MUL:
-        ret = BMul(this.CompileExpr(dct, rct, r.X), this.CompileExpr(dct, rct, r.Y))
+        ret = BMul(this.CompileExpr(cpt, rct, r.X), this.CompileExpr(cpt, rct, r.Y))
     case token.QUO:
-        ret = BQuo(this.CompileExpr(dct, rct, r.X), this.CompileExpr(dct, rct, r.Y))
+        ret = BQuo(this.CompileExpr(cpt, rct, r.X), this.CompileExpr(cpt, rct, r.Y))
     case token.REM:
-        ret = BRem(this.CompileExpr(dct, rct, r.X), this.CompileExpr(dct, rct, r.Y))
+        ret = BRem(this.CompileExpr(cpt, rct, r.X), this.CompileExpr(cpt, rct, r.Y))
         // &&, ||, &, |, >, <, >=, <=, ==, !=
     case token.AND:
-        ret = BAnd(this.CompileExpr(dct, rct, r.X), this.CompileExpr(dct, rct, r.Y))
+        ret = BAnd(this.CompileExpr(cpt, rct, r.X), this.CompileExpr(cpt, rct, r.Y))
     case token.OR:
-        ret = BOr(this.CompileExpr(dct, rct, r.X), this.CompileExpr(dct, rct, r.Y))
+        ret = BOr(this.CompileExpr(cpt, rct, r.X), this.CompileExpr(cpt, rct, r.Y))
     case token.LAND:
-        ret = BLand(this.CompileExpr(dct, rct, r.X), this.CompileExpr(dct, rct, r.Y))
+        ret = BLand(this.CompileExpr(cpt, rct, r.X), this.CompileExpr(cpt, rct, r.Y))
     case token.LOR:
-        ret = BLor(this.CompileExpr(dct, rct, r.X), this.CompileExpr(dct, rct, r.Y))
+        ret = BLor(this.CompileExpr(cpt, rct, r.X), this.CompileExpr(cpt, rct, r.Y))
     case token.GTR:
-        ret = BGtr(this.CompileExpr(dct, rct, r.X), this.CompileExpr(dct, rct, r.Y))
+        ret = BGtr(this.CompileExpr(cpt, rct, r.X), this.CompileExpr(cpt, rct, r.Y))
     case token.LSS:
-        ret = BLss(this.CompileExpr(dct, rct, r.X), this.CompileExpr(dct, rct, r.Y))
+        ret = BLss(this.CompileExpr(cpt, rct, r.X), this.CompileExpr(cpt, rct, r.Y))
     case token.GEQ:
-        ret = BGeq(this.CompileExpr(dct, rct, r.X), this.CompileExpr(dct, rct, r.Y))
+        ret = BGeq(this.CompileExpr(cpt, rct, r.X), this.CompileExpr(cpt, rct, r.Y))
     case token.LEQ:
-        ret = BLeq(this.CompileExpr(dct, rct, r.X), this.CompileExpr(dct, rct, r.Y))
+        ret = BLeq(this.CompileExpr(cpt, rct, r.X), this.CompileExpr(cpt, rct, r.Y))
     case token.NEQ:
-        ret = BNeq(this.CompileExpr(dct, rct, r.X), this.CompileExpr(dct, rct, r.Y))
+        ret = BNeq(this.CompileExpr(cpt, rct, r.X), this.CompileExpr(cpt, rct, r.Y))
     case token.EQL:
-        ret = BEql(this.CompileExpr(dct, rct, r.X), this.CompileExpr(dct, rct, r.Y))
+        ret = BEql(this.CompileExpr(cpt, rct, r.X), this.CompileExpr(cpt, rct, r.Y))
     default:
         panic("syntax error: bad binary expr")
     }
