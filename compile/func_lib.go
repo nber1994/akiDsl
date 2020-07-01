@@ -1,7 +1,7 @@
 package compile
 
 import (
-    //"fmt"
+    "fmt"
     "time"
 )
 
