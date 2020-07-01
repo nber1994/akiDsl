@@ -108,18 +108,20 @@ func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr
     //校验内置函数
     var funcArgs []reflect.Value
     funcName := r.Fun.(*ast.Ident).Name
-    fmt.Println("------------------------in Call expr %#v", funcName)
+    fmt.Println("------------------------in Call expr ", funcName)
     //初始化入参
     for _, arg := range r.Args {
         funcArgs = append(funcArgs, reflect.ValueOf(this.CompileExpr(dct, rct, arg)))
     }
     fmt.Println("------------------------in Call expr args", funcArgs)
     var res []reflect.Value
-    if RealFuncName, exist:= SupFuncList[funcName]; exist {
+    if RealFuncName, exist := SupFuncList[funcName]; exist {
         flib := NewFuncLib()
         res = reflect.ValueOf(flib).MethodByName(RealFuncName).Call(funcArgs)
+    } else if CxtFuncName, cxtExist := dslCxt.SupFuncList[funcName]; cxtExist {
+        res = reflect.ValueOf(dct).MethodByName(CxtFuncName).Call(funcArgs)
     } else {
-        res = reflect.ValueOf(dct).MethodByName(funcName).Call(funcArgs)
+        panic("syntax error: nonsupport func name")
     }
     if nil == res {
         return ret

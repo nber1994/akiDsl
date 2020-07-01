@@ -10,6 +10,17 @@ type DslCxt struct {
 	Node *nodejson.Node
 }
 
+var (
+    SupFuncList = map[string]string{
+        "GetInt":"GetInt",
+        "GetFloat":"GetFloat",
+        "GetBool":"GetBool",
+        "GetString":"GetString",
+        "Set":"Set",
+        "Exist":"Exist",
+    }
+)
+
 
 func New(originCxt *string) (*DslCxt, error) {
     node, err := nodejson.UnmarshalToNode([]byte(*originCxt))
