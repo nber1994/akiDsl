@@ -41,34 +41,34 @@ func (this *DslCxt) ToJsonString() string {
 //获取Cxt的值
 func (this *DslCxt) GetInt(path string) int64 {
     value := this.Node.Get(path)
-    fmt.Println("....dsl Get path ", path, " value ", value.Value())
+    //fmt.Println("....dsl Get path ", path, " value ", value.Value())
     return value.Int64()
 }
 
 //获取Cxt的值
 func (this *DslCxt) GetFloat(path string) float64 {
     value := this.Node.Get(path)
-    fmt.Println("....dsl Get path ", path, " value ", value.Value())
+    //fmt.Println("....dsl Get path ", path, " value ", value.Value())
     return value.Float64()
 }
 
 //获取Cxt的值
 func (this *DslCxt) GetBool(path string) bool {
     value := this.Node.Get(path)
-    fmt.Println("....dsl Get path ", path, " value ", value.Value())
+    //fmt.Println("....dsl Get path ", path, " value ", value.Value())
     return value.Bool()
 }
 
 //获取Cxt的值
 func (this *DslCxt) GetString(path string) string {
     value := this.Node.Get(path)
-    fmt.Println("....dsl Get path ", path, " value ", value.Value())
+    //fmt.Println("....dsl Get path ", path, " value ", value.Value())
     return value.String()
 }
 
 func (this *DslCxt) Set(path string, value interface{}) interface{} {
     this.Node.Set(path, value)
-    fmt.Println("....dsl Set path ", path, " value ", value)
+    //fmt.Println("....dsl Set path ", path, " value ", value)
     return this.GetString(path)
 }
 

@@ -38,7 +38,7 @@ func (this *Decl) CompileDecl(pct *CompileCxt, d ast.Decl) {
 }
 
 func (this *Decl) CompileFuncDecl(pct *CompileCxt, d *ast.FuncDecl) {
-    fmt.Println("---------in func decl")
+    //fmt.Println("---------in func decl")
     stmtHd := NewStmt()
     for _, stmt := range d.Body.List {
         stmtHd.CompileStmt(pct, stmt)

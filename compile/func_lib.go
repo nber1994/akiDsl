@@ -22,11 +22,11 @@ func (this *FuncLib) Len(target []interface{}) int {
 }
 
 func (this *FuncLib) Println(target ...interface{}) {
-    fmt.Println(target...)
+    //fmt.Println(target...)
 }
 
 func (this *FuncLib) Sprintf(spf string, v ...interface{}) string {
-    fmt.Println(">>sprintf ", spf, v)
+    //fmt.Println(">>sprintf ", spf, v)
     return fmt.Sprintf(spf, v...)
 }
 

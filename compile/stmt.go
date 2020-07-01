@@ -119,7 +119,7 @@ func (this *Stmt) CompileExprStmt(cpt *CompileCxt, stmt *ast.ExprStmt) {
 }
 
 func (this *Stmt) CompileBlockStmt(cpt *CompileCxt, stmt *ast.BlockStmt) {
-    fmt.Println("-----------------in block stmt")
+    //fmt.Println("-----------------in block stmt")
     for _, b := range stmt.List {
         this.CompileStmt(cpt, b)
     }
@@ -129,7 +129,7 @@ func (this *Stmt) CompileBlockStmt(cpt *CompileCxt, stmt *ast.BlockStmt) {
 func (this *Stmt) GetValue(name string) interface{} {
     stmt := this
     for nil != stmt {
-        fmt.Println("now stmt rct is ", stmt.Rct.ToString())
+        //fmt.Println("now stmt rct is ", stmt.Rct.ToString())
         if _, exist := stmt.Rct.Vars[name]; exist {
             return stmt.Rct.Vars[name]
         }
@@ -141,7 +141,7 @@ func (this *Stmt) GetValue(name string) interface{} {
 func (this *Stmt) ValueExist(name string) (bool, *Stmt) {
     stmt := this
     for nil != stmt {
-        fmt.Println("now stmt rct is ", stmt.Rct.ToString())
+        //fmt.Println("now stmt rct is ", stmt.Rct.ToString())
         if _, exist := stmt.Rct.Vars[name]; exist {
             return true, stmt
         }
@@ -169,7 +169,7 @@ func (this *Stmt) SetValue(name string, value interface{}, create bool) {
 }
 
 func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
-    fmt.Println("-----------------in assign stmt")
+    //fmt.Println("-----------------in assign stmt")
     //只支持= :=
     if token.DEFINE != stmt.Tok && token.ASSIGN != stmt.Tok {
         panic("syntax error: nonsupport Tok ")
@@ -251,7 +251,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
 
 
 func (this *Stmt) CompileForStmt(cpt *CompileCxt, stmt *ast.ForStmt) {
-    fmt.Println("----------------in for stmt")
+    //fmt.Println("----------------in for stmt")
     stmtHd := this.NewChild()
     expr := NewExpr()
     //初始条件
@@ -267,7 +267,7 @@ func (this *Stmt) CompileForStmt(cpt *CompileCxt, stmt *ast.ForStmt) {
 }
 
 func (this *Stmt) CompileIfStmt(cpt *CompileCxt, stmt *ast.IfStmt) {
-    fmt.Println("----------------in if stmt")
+    //fmt.Println("----------------in if stmt")
     stmtHd := this.NewChild()
     expr := NewExpr()
     //赋值操作,在本节点赋值
@@ -283,7 +283,7 @@ func (this *Stmt) CompileIfStmt(cpt *CompileCxt, stmt *ast.IfStmt) {
 
 //只支持变量
 func (this *Stmt) CompileIncDecStmt(cpt *CompileCxt, stmt *ast.IncDecStmt) {
-    fmt.Println("----------------in inc dec stmt")
+    //fmt.Println("----------------in inc dec stmt")
     //只支持 ++ --
     if token.INC != stmt.Tok && token.DEC != stmt.Tok {
         panic("syntax error: nonsupport Tok ")
@@ -303,7 +303,7 @@ func (this *Stmt) CompileIncDecStmt(cpt *CompileCxt, stmt *ast.IncDecStmt) {
 }
 
 func (this *Stmt) CompileRangeStmt(cpt *CompileCxt, stmt *ast.RangeStmt) {
-    fmt.Println("----------------in range stmt")
+    //fmt.Println("----------------in range stmt")
     expr := NewExpr()
     stmtHd := this.NewChild()
     RangeTarget := expr.CompileExpr(cpt.DslCxt, this, stmt.Key.(*ast.Ident).Obj.Decl.(*ast.AssignStmt).Rhs[0].(*ast.UnaryExpr).X)
@@ -333,11 +333,11 @@ func (this *Stmt) CompileRangeStmt(cpt *CompileCxt, stmt *ast.RangeStmt) {
 
 //支持返回只支持一个
 func (this *Stmt) CompileReturnStmt(cpt *CompileCxt, stmt *ast.ReturnStmt) {
-    fmt.Println("----------------in return stmt")
+    //fmt.Println("----------------in return stmt")
     var ret interface{}
     expr := NewExpr()
     e := stmt.Results[0]
     ret = expr.CompileExpr(cpt.DslCxt, this, e)
-    fmt.Println("----------------return ", ret)
+    //fmt.Println("----------------return ", ret)
     cpt.ReturnCh <- ret
 }

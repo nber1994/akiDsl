@@ -62,7 +62,7 @@ func (this *Expr) CompileExpr(dct *dslCxt.DslCxt, rct *Stmt, r ast.Expr) interfa
 }
 
 func (this *Expr) CompileSliceExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.SliceExpr) interface{} {
-    fmt.Println("------------------------in Slice expr")
+    //fmt.Println("------------------------in Slice expr")
     var ret interface{}
     x := this.CompileExpr(dct, rct, r.X)
     low := this.CompileExpr(dct, rct, r.Low)
@@ -86,7 +86,7 @@ func (this *Expr) CompileSliceExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.SliceEx
 
 //index操作
 func (this *Expr) CompileIndexExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.IndexExpr) interface{} {
-    fmt.Println("------------------------in Index expr")
+    //fmt.Println("------------------------in Index expr")
     var ret interface{}
     target := this.CompileExpr(dct, rct, r.X)
     index := this.CompileExpr(dct, rct, r.Index)
@@ -103,17 +103,17 @@ func (this *Expr) CompileIndexExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.IndexEx
 
 //内置函数 MethodByName会panic
 func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr) interface{} {
-    fmt.Println("------------------------in Call expr")
+    //fmt.Println("------------------------in Call expr")
     var ret interface{}
     //校验内置函数
     var funcArgs []reflect.Value
     funcName := r.Fun.(*ast.Ident).Name
-    fmt.Println("------------------------in Call expr ", funcName)
+    //fmt.Println("------------------------in Call expr ", funcName)
     //初始化入参
     for _, arg := range r.Args {
         funcArgs = append(funcArgs, reflect.ValueOf(this.CompileExpr(dct, rct, arg)))
     }
-    fmt.Println("------------------------in Call expr args", funcArgs)
+    //fmt.Println("------------------------in Call expr args", funcArgs)
     var res []reflect.Value
     if RealFuncName, exist := SupFuncList[funcName]; exist {
         flib := NewFuncLib()
@@ -131,7 +131,7 @@ func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr
 
 //处理多返回值函数
 func (this *Expr) CompileCallMultiReturnExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr) []interface{} {
-    fmt.Println("------------------------in Call multi expr")
+    //fmt.Println("------------------------in Call multi expr")
     funcLib := NewFuncLib()
     var ret []interface{}
     //校验内置函数
@@ -149,7 +149,7 @@ func (this *Expr) CompileCallMultiReturnExpr(dct *dslCxt.DslCxt, rct *Stmt, r *a
 }
 
 func (this *Expr) CompileBasicLitExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.BasicLit) interface{} {
-    fmt.Println("------------------------in basiclit expr")
+    //fmt.Println("------------------------in basiclit expr")
     var ret interface{}
     switch r.Kind {
     case token.INT:
@@ -167,12 +167,12 @@ func (this *Expr) CompileBasicLitExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.Basi
     default:
         panic("syntax error: bad basicLit")
     }
-    fmt.Println("------------------------expr res ", ret)
+    //fmt.Println("------------------------expr res ", ret)
     return ret
 }
 
 func (this *Expr) CompileArrayExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CompositeLit) interface{} {
-    fmt.Println("------------------------in array expr")
+    //fmt.Println("------------------------in array expr")
     var ret []interface{}
     for _, e := range r.Elts {
         switch e := e.(type) {
@@ -193,7 +193,7 @@ func (this *Expr) CompileArrayExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.Composi
 }
 
 func (this *Expr) CompileMapExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CompositeLit) interface{} {
-    fmt.Println("------------------------in map expr")
+    //fmt.Println("------------------------in map expr")
     ret := make(map[interface{}]interface{})
     var key interface{}
     var value interface{}
@@ -207,14 +207,14 @@ func (this *Expr) CompileMapExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.Composite
 
 
 func (this *Expr) CompileIdentExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.Ident) interface{} {
-    fmt.Println("------------------------in ident expr")
+    //fmt.Println("------------------------in ident expr")
     var ret interface{}
     ret = rct.GetValue(r.Name)
     return ret
 }
 
 func (this *Expr) CompileBinaryExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.BinaryExpr) interface{} {
-    fmt.Println("------------------------in binary expr")
+    //fmt.Println("------------------------in binary expr")
     var ret interface{}
     switch r.Op {
         //+ - * / %
