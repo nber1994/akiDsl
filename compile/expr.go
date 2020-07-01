@@ -123,7 +123,7 @@ func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr
     if nil == res {
         return ret
     }
-    return ReflectValueRealTypeValue(res[0])
+    return res[0].Interface()
 }
 
 //处理多返回值函数
