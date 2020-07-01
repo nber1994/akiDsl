@@ -6,7 +6,7 @@ import (
     "go/ast"
     "github.com/spf13/cast"
     "reflect"
-    //"fmt"
+    "fmt"
 	"strconv"
 )
 
@@ -121,7 +121,7 @@ func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr
     } else if CxtFuncName, cxtExist := dslCxt.SupFuncList[funcName]; cxtExist {
         res = reflect.ValueOf(dct).MethodByName(CxtFuncName).Call(funcArgs)
     } else {
-        panic("syntax error: nonsupport func name")
+        panic(fmt.Sprintf("syntax error: nonsupport func name %v", r.Lparen))
     }
     if nil == res {
         return ret
