@@ -33,8 +33,6 @@ func BAdd(l interface{}, r interface{}) interface{} {
 		return l + cast.ToFloat64(r)
 	case string:
 		return l + cast.ToString(r)
-	case interface{}:
-        fmt.Println("fuck")
 
 	default:
         panic(fmt.Sprintf("syntax error: bad binary add type= %#v \n", l))
@@ -429,11 +427,29 @@ func BGeq(l interface{}, r interface{}) bool {
 }
 
 func BNeq(l interface{}, r interface{}) bool {
-    return l != r
+    if l == nil && r == nil {
+        return false
+    } else if  l != nil && r == nil {
+        return true
+    } else if l == nil && r != nil {
+        return true
+    } else if l != nil && r != nil {
+        return l != r
+    }
+    return false
 }
 
 func BEql(l interface{}, r interface{}) bool {
-    return l == r
+    if l == nil && r == nil {
+        return true
+    } else if  l != nil && r == nil {
+        return false
+    } else if l == nil && r != nil {
+        return false
+    } else if l != nil && r != nil {
+        return l == r
+    }
+    return false
 }
 
 func BInc(r interface{}) interface{} {

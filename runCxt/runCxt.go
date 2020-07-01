@@ -12,8 +12,10 @@ type RunCxt struct {
 }
 
 func NewRunCxt() *RunCxt{
+    rcxt := make(map[string]interface{})
+    rcxt["nil"] = nil
     return &RunCxt{
-        Vars: make(map[string]interface{}),
+        Vars: rcxt,
     }
 }
 
