@@ -92,7 +92,7 @@ func (this *Expr) CompileIndexExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.IndexEx
     index := this.CompileExpr(dct, rct, r.Index)
     switch target := target.(type) {
     case []interface{}:
-        ret = target[index.(int)]
+        ret = target[cast.ToInt(index)]
     case map[interface{}]interface{}:
         ret = target[index]
     default:
