@@ -30,6 +30,18 @@ func (n *Node) ToJsonString() (string, error) {
     return string(ret), nil
 }
 
+func (n *Node) Exist(link string) bool {
+	linkarr := strings.Split(link, ".")
+	var data = n.data
+	for _, k := range linkarr {
+		dataMap, ok := data.(map[string]interface{})
+		if !ok {
+			return false
+		}
+		data = dataMap[k]
+	}
+	return true
+}
 
 func (n *Node) Value() interface{} {
 	return n.data

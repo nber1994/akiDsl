@@ -60,3 +60,7 @@ func (this *DslCxt) Set(path string, value interface{}) interface{} {
     fmt.Println("....dsl Set path ", path, " value ", value)
     return this.GetString(path)
 }
+
+func (this *DslCxt) Exist(path string) bool {
+    return this.Node.Exist(path)
+}
