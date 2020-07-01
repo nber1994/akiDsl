@@ -151,13 +151,13 @@ func (this *Expr) CompileBasicLitExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.Basi
     var ret interface{}
     switch r.Kind {
     case token.INT:
-        ret = cast.ToInt(r.Value)
+        ret = cast.ToInt64(r.Value)
     case token.FLOAT:
         ret = cast.ToFloat64(r.Value)
     case token.STRING:
         retStr := cast.ToString(r.Value)
 		var err error
-		//去掉转义的双引号 这个真tm坑死我了
+		//去掉转义的双引号 这个真tm天坑
 		ret, err = strconv.Unquote(retStr)
 		if nil != err {
 			panic("syntax error: bad basicLit string")
