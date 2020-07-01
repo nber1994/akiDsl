@@ -1,7 +1,7 @@
 package compile
 
 import (
-    //"fmt"
+    "fmt"
     "go/ast"
     "go/token"
 	"github.com/spf13/cast"
@@ -53,7 +53,7 @@ func (this *Stmt) CompileStmt(cpt *CompileCxt, stmt ast.Stmt) {
     case *ast.ExprStmt:
         cStmt.CompileExprStmt(cpt, stmt)
     default:
-        panic("syntax error: nonsupport stmt ")
+        panic(fmt.Sprintf("syntax error: Bad Stmt Type %v", cpt.Fset.Position(stmt.Pos())))
     }
 }
 
@@ -114,7 +114,7 @@ func (this *Stmt) CompileExprStmt(cpt *CompileCxt, stmt *ast.ExprStmt) {
 	case *ast.CallExpr:
 		expr.CompileExpr(cpt, this, X)
 	default:
-        panic("syntax error: nonsupport expr stmt expr")
+        panic(fmt.Sprintf("syntax error: Bad ExprStmt Type %v", cpt.Fset.Position(stmt.Pos())))
 
 	}
 }
@@ -136,7 +136,7 @@ func (this *Stmt) GetValue(name string) interface{} {
         }
         stmt = stmt.Father
     }
-    panic("syntax error: non-reachable var " + name)
+    panic(fmt.Sprintf("syntax error: Item Can Not Reach %v", name))
 }
 
 func (this *Stmt) ValueExist(name string) (bool, *Stmt) {
@@ -155,14 +155,14 @@ func (this *Stmt) SetValue(name string, value interface{}, create bool) {
     if create {
         //只在本节点内存中做校验
         if exist := this.Rct.ValueExist(name); exist {
-            panic("syntax error: redeclare var " + name)
+            panic(fmt.Sprintf("syntax error: Redeclare Value %v", name))
         } else {
             this.Rct.SetValue(name, value)
         }
     } else {
         //只在本节点内存中做校验
         if exist, node := this.ValueExist(name); !exist {
-            panic("syntax error: undeclare var " + name)
+            panic(fmt.Sprintf("syntax error: Undeclare Varlue %v", name))
         } else {
             node.Rct.SetValue(name, value)
         }
@@ -173,7 +173,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
     //fmt.Println("-----------------in assign stmt")
     //只支持= :=
     if token.DEFINE != stmt.Tok && token.ASSIGN != stmt.Tok {
-        panic("syntax error: nonsupport Tok ")
+        panic(fmt.Sprintf("syntax error: Bad Tok %v", cpt.Fset.Position(stmt.Pos())))
     }
 
     expr := NewExpr()
@@ -197,14 +197,14 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
                     case int:
                         target[idx] = expr.CompileExpr(cpt, this, r)
                     default:
-                        panic("syntax error: index type error")
+                        panic(fmt.Sprintf("syntax error: Bad Index Type %v", cpt.Fset.Position(stmt.Pos())))
                     }
                     this.SetValue(l.X.(*ast.Ident).Name, target, false)
                 default:
-                    panic("syntax error: assign type error")
+                    panic(fmt.Sprintf("syntax error: Bad Assign Type %v", cpt.Fset.Position(stmt.Pos())))
                 }
             default:
-                panic("syntax error: assign type error")
+                panic(fmt.Sprintf("syntax error: Bad Assign Type %v", cpt.Fset.Position(stmt.Pos())))
             }
         }
     } else if len(stmt.Lhs) > len(stmt.Rhs) && 1 == len(stmt.Rhs) {
@@ -214,7 +214,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
         case *ast.CallExpr:
             funcRet := expr.CompileCallMultiReturnExpr(cpt, this, r)
             if len(funcRet) != len(funcRet) {
-                panic("syntax error: func return can not match")
+                panic(fmt.Sprintf("syntax error: Func Return Nums Not Match %v", cpt.Fset.Position(stmt.Pos())))
             }
             for k, l := range stmt.Lhs {
                 this.SetValue(l.(*ast.Ident).Name, funcRet[k], token.DEFINE == stmt.Tok)
@@ -232,7 +232,7 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
                     this.SetValue(kName, kVar, token.DEFINE == stmt.Tok)
                     this.SetValue(vName, vExist, token.DEFINE == stmt.Tok)
                 default:
-                    panic("syntax error: index exist assign stmt type error")
+                    panic(fmt.Sprintf("syntax error: Bad ExistStmt Type %v", cpt.Fset.Position(stmt.Pos())))
                 }
             }
 		default:
@@ -241,12 +241,12 @@ func (this *Stmt) CompileAssignStmt(cpt *CompileCxt, stmt *ast.AssignStmt) {
 				case *ast.Ident:
 					this.SetValue(l.Name, expr.CompileExpr(cpt, this, r), token.DEFINE == stmt.Tok)
 				default:
-                    panic("syntax error: index exist assign stmt type error")
+                    panic(fmt.Sprintf("syntax error: Bad Index Type ExistStmt %v", cpt.Fset.Position(stmt.Pos())))
 				}
 			}
         }
     } else {
-        panic("syntax error: nonsupport assign nums")
+        panic(fmt.Sprintf("syntax error: Bad AssignStmt Nums %v", cpt.Fset.Position(stmt.Pos())))
     }
 }
 
@@ -287,7 +287,7 @@ func (this *Stmt) CompileIncDecStmt(cpt *CompileCxt, stmt *ast.IncDecStmt) {
     //fmt.Println("----------------in inc dec stmt")
     //只支持 ++ --
     if token.INC != stmt.Tok && token.DEC != stmt.Tok {
-        panic("syntax error: nonsupport Tok ")
+        panic(fmt.Sprintf("syntax error: Bad Tok %v", cpt.Fset.Position(stmt.Pos())))
     }
 
     varName := stmt.X.(*ast.Ident).Name
@@ -299,7 +299,7 @@ func (this *Stmt) CompileIncDecStmt(cpt *CompileCxt, stmt *ast.IncDecStmt) {
         //this.SetValue(varName, expr.CompileExpr(cpt, this, stmt.X))
         this.SetValue(varName, BDec(this.GetValue(varName)), false)
     default:
-        panic("syntax error: nonsupport Tok ")
+        panic(fmt.Sprintf("syntax error: Bad Tok %v", cpt.Fset.Position(stmt.Pos())))
     }
 }
 
@@ -328,7 +328,7 @@ func (this *Stmt) CompileRangeStmt(cpt *CompileCxt, stmt *ast.RangeStmt) {
             stmtHd.CompileStmt(cpt, stmt.Body)
         }
     default:
-        panic("syntax error: nonsupport range type")
+        panic(fmt.Sprintf("syntax error: Bad RangeStmt Type %v", cpt.Fset.Position(stmt.Pos())))
     }
 }
 

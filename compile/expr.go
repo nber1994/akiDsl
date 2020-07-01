@@ -45,7 +45,7 @@ func (this *Expr) CompileExpr(cpt *CompileCxt, rct *Stmt, r ast.Expr) interface{
         case *ast.MapType: //map
             ret = this.CompileMapExpr(cpt, rct, r)
         default:
-            panic("syntax error: nonsupport expr type")
+            panic(fmt.Sprintf("syntax error: Bad CompositeList Type %v", cpt.Fset.Position(r.Pos())))
         }
     case *ast.CallExpr:
         ret = this.CompileCallExpr(cpt, rct, r)
@@ -56,7 +56,7 @@ func (this *Expr) CompileExpr(cpt *CompileCxt, rct *Stmt, r ast.Expr) interface{
     case *ast.SliceExpr:
         ret = this.CompileSliceExpr(cpt, rct, r)
     default:
-        panic("syntax error: nonsupport expr type")
+        panic(fmt.Sprintf("syntax error: Bad Expr Type %v", cpt.Fset.Position(r.Pos())))
     }
     return ret
 }
@@ -79,7 +79,7 @@ func (this *Expr) CompileSliceExpr(cpt *CompileCxt, rct *Stmt, r *ast.SliceExpr)
             ret = x[:]
         }
     default:
-        panic("syntax error: nonsupport slice type")
+        panic(fmt.Sprintf("syntax error: Bad SliceExpr Type %v", cpt.Fset.Position(r.Pos())))
     }
     return ret
 }
@@ -96,7 +96,7 @@ func (this *Expr) CompileIndexExpr(cpt *CompileCxt, rct *Stmt, r *ast.IndexExpr)
     case map[interface{}]interface{}:
         ret = target[index]
     default:
-        panic("syntax error: bad index expr type")
+        panic(fmt.Sprintf("syntax error: Bad IndexExpr Type %v", cpt.Fset.Position(r.Pos())))
     }
     return ret
 }
@@ -121,7 +121,7 @@ func (this *Expr) CompileCallExpr(cpt *CompileCxt, rct *Stmt, r *ast.CallExpr) i
     } else if CxtFuncName, cxtExist := dslCxt.SupFuncList[funcName]; cxtExist {
         res = reflect.ValueOf(cpt.DslCxt).MethodByName(CxtFuncName).Call(funcArgs)
     } else {
-        panic(fmt.Sprintf("syntax error: nonsupport func name %v", cpt.Fset.Position(r.Pos())))
+        panic(fmt.Sprintf("syntax error: Bad Func Name %v", cpt.Fset.Position(r.Pos())))
     }
     if nil == res {
         return ret
@@ -162,10 +162,10 @@ func (this *Expr) CompileBasicLitExpr(cpt *CompileCxt, rct *Stmt, r *ast.BasicLi
 		//去掉转义的双引号 这个真tm天坑
 		ret, err = strconv.Unquote(retStr)
 		if nil != err {
-			panic("syntax error: bad basicLit string")
+            panic(fmt.Sprintf("syntax error: Bad String %v", cpt.Fset.Position(r.Pos())))
 		}
     default:
-        panic("syntax error: bad basicLit")
+        panic(fmt.Sprintf("syntax error: Bad BasicList Type %v", cpt.Fset.Position(r.Pos())))
     }
     //fmt.Println("------------------------expr res ", ret)
     return ret
@@ -186,7 +186,7 @@ func (this *Expr) CompileArrayExpr(cpt *CompileCxt, rct *Stmt, r *ast.CompositeL
             }
             ret = append(ret, this.CompileExpr(cpt, rct, compLit))
         default:
-            panic("syntax error: bad array item type")
+            panic(fmt.Sprintf("syntax error: Bad Array Item Type %v", cpt.Fset.Position(r.Pos())))
         }
     }
     return ret
@@ -250,7 +250,7 @@ func (this *Expr) CompileBinaryExpr(cpt *CompileCxt, rct *Stmt, r *ast.BinaryExp
     case token.EQL:
         ret = BEql(this.CompileExpr(cpt, rct, r.X), this.CompileExpr(cpt, rct, r.Y))
     default:
-        panic("syntax error: bad binary expr")
+        panic(fmt.Sprintf("syntax error: Bad BinaryExpr Type %v", cpt.Fset.Position(r.Pos())))
     }
     return ret
 }
