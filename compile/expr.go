@@ -108,6 +108,7 @@ func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr
     //校验内置函数
     var funcArgs []reflect.Value
     funcName := r.Fun.(*ast.Ident).Name
+    fmt.Println("------------------------in Call expr %#v", funcName)
     //初始化入参
     for _, arg := range r.Args {
         funcArgs = append(funcArgs, reflect.ValueOf(this.CompileExpr(dct, rct, arg)))

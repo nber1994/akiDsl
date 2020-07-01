@@ -20,8 +20,14 @@ func (n Node) String() string {
 	v, _ := n.StringE()
 	return v
 }
+
 func (n Node) Bool() bool {
 	v, _ := n.BoolE()
+	return v
+}
+
+func (n Node) Float64() float64 {
+	v, _ := n.Float64E()
 	return v
 }
 
