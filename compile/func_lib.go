@@ -26,6 +26,7 @@ func (this *FuncLib) Println(target ...interface{}) {
 }
 
 func (this *FuncLib) Sprintf(spf string, v ...interface{}) string {
+    fmt.Println(">>sprintf ", spf)
     return fmt.Sprintf(spf, v...)
 }
 
