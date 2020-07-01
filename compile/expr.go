@@ -92,8 +92,15 @@ func (this *Expr) CompileIndexExpr(cpt *CompileCxt, rct *Stmt, r *ast.IndexExpr)
     index := this.CompileExpr(cpt, rct, r.Index)
     switch target := target.(type) {
     case []interface{}:
-        ret = target[cast.ToInt(index)]
+        idx := cast.ToInt(index)
+        if idx >= len(target) {
+            panic(fmt.Sprintf("syntax error: Index Out Of Range %v", cpt.Fset.Position(r.Pos())))
+        }
+        ret = target[idx]
     case map[interface{}]interface{}:
+        if _, exist := target[index]; !exist {
+            panic(fmt.Sprintf("syntax error: Key Not Exist %v", cpt.Fset.Position(r.Pos())))
+        }
         ret = target[index]
     default:
         panic(fmt.Sprintf("syntax error: Bad IndexExpr Type %v", cpt.Fset.Position(r.Pos())))
