@@ -121,7 +121,7 @@ func (this *Expr) CompileCallExpr(dct *dslCxt.DslCxt, rct *Stmt, r *ast.CallExpr
     } else if CxtFuncName, cxtExist := dslCxt.SupFuncList[funcName]; cxtExist {
         res = reflect.ValueOf(dct).MethodByName(CxtFuncName).Call(funcArgs)
     } else {
-        panic(fmt.Sprintf("syntax error: nonsupport func name %v", r.Lparen))
+        panic(fmt.Sprintf("syntax error: nonsupport func name %v", r.Pos()))
     }
     if nil == res {
         return ret
