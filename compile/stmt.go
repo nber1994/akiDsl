@@ -168,7 +168,7 @@ func (this *Stmt) SetValue(name string, value interface{}, create bool) {
             nowValue := node.Rct.GetValue(name)
             //做类型校验
             if reflect.TypeOf(value).Kind() != reflect.TypeOf(nowValue).Kind() {
-                panic(fmt.Sprintf("syntax error: Value Type Not Match %v have %v want %v", name, reflect.TypeOf(nowValue), reflect.TypeOf(value)))
+                panic(fmt.Sprintf("syntax error: Value Type Not Match %v: want (%v) have (%v)", name, reflect.TypeOf(nowValue), reflect.TypeOf(value)))
             }
             node.Rct.SetValue(name, value)
         }
