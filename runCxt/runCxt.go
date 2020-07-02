@@ -14,6 +14,8 @@ type RunCxt struct {
 func NewRunCxt() *RunCxt{
     rcxt := make(map[string]interface{})
     rcxt["nil"] = nil
+    rcxt["true"] = true
+    rcxt["false"] = false
     return &RunCxt{
         Vars: rcxt,
     }
