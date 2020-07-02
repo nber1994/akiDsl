@@ -314,18 +314,28 @@ func (this *Stmt) CompileRangeStmt(cpt *CompileCxt, stmt *ast.RangeStmt) {
     case []interface{}:
         for k, v := range rt {
             //设置kv的值
-            stmtHd.SetValue(kName, k, true)
-            stmtHd.SetValue(vName, v, true)
+            isCreate := true
+            if k > 0 {
+                isCreate = false
+            }
+            stmtHd.SetValue(kName, k, isCreate)
+            stmtHd.SetValue(vName, v, isCreate)
             //执行Body
             stmtHd.CompileStmt(cpt, stmt.Body)
         }
     case map[interface{}]interface{}:
+        i := 0
         for k, v := range rt {
             //设置kv的值
-            stmtHd.SetValue(kName, k, true)
-            stmtHd.SetValue(vName, v, true)
+            isCreate := true
+            if i > 0 {
+                isCreate = false
+            }
+            stmtHd.SetValue(kName, k, isCreate)
+            stmtHd.SetValue(vName, v, isCreate)
             //执行Body
             stmtHd.CompileStmt(cpt, stmt.Body)
+            i++
         }
     default:
         panic(fmt.Sprintf("syntax error: Bad RangeStmt Type %v", cpt.Fset.Position(stmt.Pos())))
