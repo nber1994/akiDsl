@@ -2,6 +2,7 @@ package compile
 
 import (
     "fmt"
+    "reflect"
     "go/ast"
     "go/token"
 	"github.com/spf13/cast"
@@ -162,8 +163,13 @@ func (this *Stmt) SetValue(name string, value interface{}, create bool) {
     } else {
         //只在本节点内存中做校验
         if exist, node := this.ValueExist(name); !exist {
-            panic(fmt.Sprintf("syntax error: Undeclare Varlue %v", name))
+            panic(fmt.Sprintf("syntax error: Undeclare Value %v", name))
         } else {
+            nowValue := node.Rct.GetValue(name)
+            //做类型校验
+            if reflect.TypeOf(value).Kind() != reflect.TypeOf(nowValue).Kind() {
+                panic(fmt.Sprintf("syntax error: Value Type Not Match %v have %v want %v", name, reflect.TypeOf(nowValue), reflect.TypeOf(value)))
+            }
             node.Rct.SetValue(name, value)
         }
     }
