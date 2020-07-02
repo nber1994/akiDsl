@@ -55,7 +55,7 @@ package main
 
 func main() {
   a := 1
-  return a
+  return a （我知道这个不符合语法，但是作为一个dsl需要一个返回值，算是半个语法糖吧）
 }
 ```
 
@@ -68,28 +68,47 @@ func main() {
     a := 1
     aa := 1.2
     aaa := "jty"
-    aaaa, aaaaa := 1
-    aaaa, aaaaa = 1
-    aaaaaaaaaaa := map[string]string{}
-
-    //集合类型
-    b := []int{1,2,3}
-    bb := []string{"i", "have", "some", "special"}
-    bbb := []map[string]string{{"nber":"1994","1994":"nber"},{"abc":"666","666":"abc"}}
+    aaaa := true
+    aaaaa := []int{1,2,3,4,5}
+    aaaaaa := []string{"a", "b", "c"}
+    aaaaaaa := []float{1.2, 1.3, 1.33}
+    aaaaaaaa := map[int]int{1:1, 2:2, 3:3}
+    aaaaaaaaa := map[int]float{1:1.1, 2:2.11, 3:22.1}
+    aaaaaaaaaa := map[int]string{1:"a", 2:"b", 3:"c"}
+    aaaaaaaaaaa := map[int]bool{1:true, 2:false, 3:true}
+    aaaaaaaaaaaa := map[string]string{"a":"a", "b":"b", "c":"c"}
+    aaaaaaaaaaaaa := map[float]float{1.1:1.2, 1.22:1.3, 1.11:2.22}
+    aaaaaaaaaaaaaa := map[float]bool{1.2:true, 2.11:false}
 
     //复合集合
-    c := map[string]string{"jty":"1994-11-10", "ldh":"1987-12-22","wyz":"1988-12-01"}
-    cc := map[string][]string{"jty":[]string{"so", "a", "big", "awesome", "boy"}, "ldh":[]string{"as", "good", "as", "jty"}}
+    b := map[string][]string{"jty":[]string{"so", "a", "big", "awesome", "boy"}, "ldh":[]string{"as", "good", "as", "jty"}}
+    bb := []map[string]string{map[string]string{"jty":"1994-11-10", "ldh":"1987-12-22","wyz":"1988-12-01"}, map[string]string{"jty":"1994-11-10", "ldh":"1987-12-22","wyz":"1988-12-01"}}
 
-    //取值
-    d := b[1]
-    dd := b[a]
-    ddd := bbb[1]["nber"]
-    dddd := c["jty"]
-    ddddd := cc[aaa][1]
-    dddddd, exist := c["jty"]
+    //其他操作
+    c, cc := 1
+    ccc, cccc := "a", "b"
+
+
+    println(a)
+    println(aa)
+    println(aaa)
+    println(aaaa)
+    println(aaaaa)
+    println(aaaaaa)
+    println(aaaaaaa)
+    println(aaaaaaaa)
+    println(aaaaaaaaa)
+    println(aaaaaaaaaa)
+    println(aaaaaaaaaaa)
+    println(aaaaaaaaaaaa)
+    println(aaaaaaaaaaaaa)
+    println(b)
+    println(bb)
+    println(c)
+    println(cc)
+    println(ccc)
+    println(cccc)
 }
-
 ```
 声明（declare）语法暂不支持（感觉也没啥用）
 
@@ -101,20 +120,12 @@ func main() {
     a := 1
     a++
     a--
-    return a
+    println(a)
 }
 ```
 
 ## If
 ```
-package main
-
-func main() {
-    a := 1
-    a++
-    a--
-}
-12:41:59 test cat testIf
 package main
 
 func main() {
@@ -125,6 +136,7 @@ func main() {
     } else {
         b = "smaller than"
     }
+    println(b)
 
     c := 1
     if b == "smaller than" {
@@ -134,11 +146,13 @@ func main() {
     } else {
         c = 4
     }
+    println(c)
 
     x := map[string]string{"a":"aa","b":"bb"}
     if _, exist := x["a"]; exist {
         x["a"] = "nber1994"
     }
+    println(x)
 }
 ```
 
@@ -150,10 +164,12 @@ func main() {
     a := 1
     for i:=0;i<10;i++ {
         a = a + 1
+        println(a)
     }
 
     for i,j := 0, 0; i+j < 10;i++ {
-        a = a + 1
+        a = a + i
+        println(a)
     }
 }
 ```
@@ -165,15 +181,13 @@ package main
 func main() {
     a := []int{1,2,3}
     b := 0
-    for _, v := range a {
-        b = v
+    for k, v := range a {
+        println("key: ", k, " value: ", v)
     }
 
     c := map[string]string{"123":"456", "nber1994":"jty"}
-    d := ""
     for k, v := range c {
-        d = k
-        d = v
+        println("key: ", k, " value: ", v)
     }
 }
 ```
@@ -183,22 +197,32 @@ func main() {
 package main
 
 func main() {
-    c, x := 1
-    a := Get("dt.year")
+    if Exist("dt.year") {
+        println(GetInt("dt.year") + 1)
+    }
     Set("dt.year", 666)
-    a = Get("dt.year")
-
 
     arr := []int{}
     arr = append(arr, 1)
-    return arr
+    println(arr)
+    c := "nber1994"
+    println(sprintf("sprintf %v", c))
 }
 ```
 目前支持的函数列表 appending...
 ```
-Get(path string)
+Dsl Context操作相关函数
+GetInt(path string) Int
+GetFloat(path string) Float64
+GetString(path string) string
+GetBool(path string) bool
 Set(path string value interface{})
+Exist(path string) bool
+
+常用函数
 append(a []interface{}, item interface{})
+println(v ...interface{})
+sprintf(v ...interface{})
 ```
 不够？我们issue见
 
@@ -213,8 +237,7 @@ func main() {
         a++
         b := 2
     }
-    a = 3
-    b := 3
+    println(b)
 }
 ```
 
