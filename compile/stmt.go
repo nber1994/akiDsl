@@ -314,16 +314,16 @@ func (this *Stmt) CompileRangeStmt(cpt *CompileCxt, stmt *ast.RangeStmt) {
     case []interface{}:
         for k, v := range rt {
             //设置kv的值
-            this.SetValue(kName, k, true)
-            this.SetValue(vName, v, true)
+            stmtHd.SetValue(kName, k, true)
+            stmtHd.SetValue(vName, v, true)
             //执行Body
             stmtHd.CompileStmt(cpt, stmt.Body)
         }
     case map[interface{}]interface{}:
         for k, v := range rt {
             //设置kv的值
-            this.SetValue(kName, k, true)
-            this.SetValue(vName, v, true)
+            stmtHd.SetValue(kName, k, true)
+            stmtHd.SetValue(vName, v, true)
             //执行Body
             stmtHd.CompileStmt(cpt, stmt.Body)
         }
