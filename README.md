@@ -1,4 +1,4 @@
-这个项目的整体设计思路：[如何设计一个DSL](http://nber1994.com/2020/07/03/go-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84DSL%E8%A7%A3%E9%87%8A%E5%99%A8.html)
+
 
 # akiDsl
 这个项目简单来说就是一个golang的脚本解释器
