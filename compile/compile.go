@@ -14,19 +14,17 @@ type CompileCxt struct {
     DslCxt *dslCxt.DslCxt
     ReturnCh chan interface{}
     ErrCh chan error
+    Err error
+    Return interface{}
 }
 
 func New(fAst *ast.File, fset *token.FileSet, dslCxtNode *dslCxt.DslCxt) *CompileCxt {
     rct := runCxt.NewRunCxt()
-    retChan := make(chan interface{})
-    errChan := make(chan error)
     return &CompileCxt {
         RunCxt: rct,
         FAst: fAst,
         Fset: fset,
         DslCxt: dslCxtNode,
-        ReturnCh: retChan,
-        ErrCh: errChan,
     }
 }
 

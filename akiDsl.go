@@ -24,10 +24,6 @@ func New(fileName *string, cxt *string) (*AkiDsl, error) {
 }
 
 func (this *AkiDsl) Run() (interface{}, *dslCxt.DslCxt, error){
-    //总体控制错误信息
-    var retErr error
-    var ret interface{}
-
     fset := token.NewFileSet()
     //这块可以扩展不止传入文件名
     fAst, err := parser.ParseFile(fset, *this.FileName, nil, 0)
@@ -38,15 +34,8 @@ func (this *AkiDsl) Run() (interface{}, *dslCxt.DslCxt, error){
     pct := compile.New(fAst, fset, this.DslCxt)
     decl := compile.NewDecl()
     d := pct.FAst.Decls[0]
+    decl.CompileDecl(pct, d)
 
-    go func() {
-        decl.CompileDecl(pct, d)
-    }()
-
-    select {
-    case ret = <-pct.ReturnCh:
-    case retErr = <-pct.ErrCh:
-    }
     //定义一个空方法，不然gc会在CompileDecl方法结束以后，把pct结构体回收 pct.Rescue()
-    return ret, pct.DslCxt, retErr
+    return pct.Return, pct.DslCxt, pct.Err
 }

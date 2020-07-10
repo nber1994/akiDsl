@@ -356,5 +356,5 @@ func (this *Stmt) CompileReturnStmt(cpt *CompileCxt, stmt *ast.ReturnStmt) {
     e := stmt.Results[0]
     ret = expr.CompileExpr(cpt, this, e)
     //fmt.Println("----------------return ", ret)
-    cpt.ReturnCh <- ret
+    cpt.Return = ret
 }

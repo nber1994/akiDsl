@@ -16,8 +16,7 @@ func NewDecl() *Decl {
 func (this *Decl) CompileDecl(pct *CompileCxt, d ast.Decl) {
     defer func() {
         if err := recover(); err != nil {
-            retErr := errors.New(err.(string))
-            pct.ErrCh <- retErr
+            pct.Err = errors.New(err.(string))
         }
     }()
 
@@ -33,8 +32,6 @@ func (this *Decl) CompileDecl(pct *CompileCxt, d ast.Decl) {
     default:
         panic("syntax error: The entry point must be main function")
     }
-    var ret interface{}
-    pct.ReturnCh <- ret
 }
 
 func (this *Decl) CompileFuncDecl(pct *CompileCxt, d *ast.FuncDecl) {
