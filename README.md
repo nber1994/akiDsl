@@ -14,13 +14,16 @@ package main
 
 import (
     "fmt"
+    "go/ast"
+    "go/parser"
+    "go/token"
     "flag"
     "github.com/nber1994/akiDsl"
 )
 
 var (
     mFile = flag.String("f", "", "file mode")
-    mCxt = flag.String("c", "{}", "cxt str")
+    mCxt = flag.String("c", "", "cxt str")
 )
 
 func main() {
@@ -29,17 +32,27 @@ func main() {
         fmt.Println("no file input")
     }
 
-    akiDslNode, newErr := akiDsl.New(mFile, mCxt)
-    if nil != newErr {
-        fmt.Println("new err: ", newErr)
-    }
-    dslRet, cxt, err := akiDslNode.Run()
-    if nil != err {
-        fmt.Println(">> the run error is: ", err)
+    fset := token.NewFileSet()
+    fAst, err := parser.ParseFile(fset, *mFile, nil, 0)
+    if err != nil {
+        fmt.Println(err)
         return
     }
-    fmt.Println(">> the dsl run result is: ", dslRet)
-    fmt.Println(">> the cxt run result is: ", cxt.ToJsonString())
+
+    ast.Print(fset, fAst)
+    fmt.Println("==========================================")
+
+    dslCxt, newErr := akiDsl.NewCxt(*mCxt)
+    if nil != newErr {
+        fmt.Println("new dsl cxt err: ", newErr)
+    }
+    akiDslNode := akiDsl.New(mFile, dslCxt)
+    dslRet, cxt, err := akiDslNode.Run()
+    fmt.Println("==========================================")
+    fmt.Println(">> err: ", err)
+    fmt.Println(">> ret ", dslRet)
+    fmt.Println(">> cxt ", cxt.ToJsonString())
+
 }
 
 ```
@@ -245,3 +258,8 @@ func main() {
 
 项目疯狂迭代中，如有问题我们issue见
 
+# change log
+* v0.0.1 init
+* v0.0.2 
+    * 代码优化
+    * 修改了入参，将上线文从string类型改为内部结构体传入，这样在每个dsl执行节点，都会省去json unmarshal步骤
